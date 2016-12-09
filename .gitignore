@@ -1,7 +1,36 @@
-/node_modules
-/public/storage
-/vendor
-/.idea
-Homestead.json
-Homestead.yaml
+vendor/
+node_modules/
+
+# Netbeans editor specific
+nbproject/
+/nbproject/private/
+
+# Eclipse editor specific
+.buildpath
+.project
+.settings/
+
+# Local storage
+storage/docs/api-docs.json
+public/vendor/
+public/uploads/
+storage/logs/
+
+# Swagger API documentation
+storage/docs/
+app/Http/Controllers/Api/V1/AppBaseController.php
+
+# Laravel 4 specific
+bootstrap/compiled.php
+app/storage/
+
+# Laravel 5 & Lumen specific
+bootstrap/cache/
+.env.*.php
+.env.php
 .env
+Homestead.yaml
+Homestead.json
+
+# Rocketeer PHP task runner and deployment package. https://github.com/rocketeers/rocketeer
+.rocketeer/
