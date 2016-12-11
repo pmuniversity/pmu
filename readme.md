@@ -7,7 +7,7 @@
 
 ### Installation ###
 
-* type `https://github.com/pmuniversity/pmu.git projectname` to clone the repository
+* type `git clone https://github.com/pmuniversity/pmu.git projectname` to clone the repository
 * type `cd projectname`
 * type `composer install`
 * type `composer update`
@@ -23,5 +23,5 @@
 * type `php artisan migrate --seed` to create and populate tables
 * edit *.env* for emails, SMS, push notification and redis configuration
 * Create virtual host for the project something like http://pmu.dev/ (optional)
-* You can access the browser by typing the virtual host OR type the project path in browser something like â€˜http://localhost/projectname/public/â€™
+* You can access the browser by typing the virtual host OR type the project path in browser something like ‘http://localhost/projectname/public/’
 * Create folder in public/uploads and should give write permissions
