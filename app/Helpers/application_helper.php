@@ -300,3 +300,16 @@ if (! function_exists ( 'customizePaginator' )) {
 		];
 	}
 }
+if (! function_exists ( 'fullTitle' )) {
+	function fullTitle($pageTitle = '') {
+		if (! $pageTitle) {
+			return config ( 'app.name' );
+		}
+		return $pageTitle . ' | ' . config ( 'app.name' );
+	}
+}
+if (! function_exists ( 'getModuleType' )) {
+	function getModuleType($request) {
+		return $request->has ( 'module' ) ? $request->input ( 'module' ) : 'topics';
+	}
+}

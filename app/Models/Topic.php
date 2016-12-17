@@ -123,4 +123,14 @@ class Topic extends BaseModel
     {
         return $this->belongsTo(env('APP_MODEL_NAMESPACE') . 'Level');
     }
+    
+    /**
+     * One to Many relation.
+     *
+     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function articles()
+    {
+    	return $this->hasMany(env('APP_MODEL_NAMESPACE') . 'Article');
+    }
 }

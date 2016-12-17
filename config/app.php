@@ -170,6 +170,7 @@ return [
 				Laracasts\Flash\FlashServiceProvider::class,
 				Maatwebsite\Excel\ExcelServiceProvider::class,
 				Jenssegers\Agent\AgentServiceProvider::class,
+				Intervention\Image\ImageServiceProvider::class,
 				
 				//
 				
@@ -237,6 +238,7 @@ return [
 				'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 				'Carbon' => Carbon\Carbon::class,
 				'Lipsum' => Magyarjeti\LaravelLipsum\LipsumFacade::class,
-				'Agent' => Jenssegers\Agent\Facades\Agent::class 
+				'Agent' => Jenssegers\Agent\Facades\Agent::class,
+				'Image' => Intervention\Image\Facades\Image::class 
 		] 
 ];

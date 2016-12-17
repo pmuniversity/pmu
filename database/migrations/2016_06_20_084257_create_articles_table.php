@@ -16,7 +16,7 @@ class CreateArticlesTable extends Migration {
 			$table->string ( 'source_url' )->nullable ();
 			$table->string ( 'title' )->nullable ();
 			$table->longText ( 'description' )->nullable ();
-			$table->string ( 'file_path' )->nullable ();
+			$table->string ( 'picture' )->nullable ();
 			$table->unsignedBigInteger ( 'author_id' )->nullable ();
 			$table->string ( 'author_name', 200 )->nulable ();
 			$table->mediumText ( 'author_location' )->nullable ();
@@ -24,7 +24,7 @@ class CreateArticlesTable extends Migration {
 			$table->string ( 'author_designation' )->nullable ();
 			$table->string ( 'author_picture' )->nullable ();
 			$table->unsignedInteger ( 'sequence' )->default ( 1 );
-			$table->string ( 'slug' )->nullabe();
+			$table->unsignedTinyInteger ( 'active' )->default ( 1 )->index ();
 			$table->unsignedInteger ( 'upvotes_count' )->default ( 0 );
 			$table->unsignedInteger ( 'downvotes_count' )->default ( 0 );
 			

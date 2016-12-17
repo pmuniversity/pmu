@@ -79,6 +79,9 @@ class Article extends Model {
 	public function comments() {
 		return $this->hasMany ( env ( 'APP_MODEL_NAMESPACE' ) . 'Comment' );
 	}
+	public function topic() {
+		return $this->belongsTo ( env ( 'APP_MODEL_NAMESPACE' ) . 'Topic' );
+	}
 	
 	/**
 	 * Set the author's name.

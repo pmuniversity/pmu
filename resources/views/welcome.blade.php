@@ -15,20 +15,17 @@
 <body>
 	<div id="app">
 		<!--Header-->
+		@if (!Auth::guest())
 		<nav class="navbar navbar-default navbar-fixed-top">
 			<div class="container">
 				<div class="navbar-collapse collapse">
 					<ul class="navbar-nav  navbar-right">
-						<li><a href="#" data-toggle="dropdown"> <i class="material-icons">&#xE3C7;</i>
-						</a>
-							<ul class="dropdown-menu pmu-caret">
-								<li class="active"><a href="#"><span>my profile</span></a></li>
-								<li><a href="#"><span>settings</span></a></li>
-							</ul></li>
+						@include('partials._top_nav')			
 					</ul>
 				</div>
 			</div>
 		</nav>
+		@endif
 		<!--//Header-->
 		<!--Banner-->
 		<section class="main-banner">
@@ -254,8 +251,7 @@
 	<!--//Copy Rights-->
 	<script>
     window.Laravel = <?php
-				
-echo json_encode ( [ 
+				echo json_encode ( [ 
 						'csrfToken' => csrf_token () 
 				] );
 				?>

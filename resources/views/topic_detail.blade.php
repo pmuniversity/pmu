@@ -34,16 +34,12 @@
 					</div>
 					<div class="article-title">{{ $topic->levelTitle }}</div>
 				</div>
+
 				<div class="navbar-collapse collapse">
 					<ul class="navbar-nav  navbar-right">
 						<li><a href="#"><i class="material-icons">&#xE8B6;</i></a></li>
 						<li><a class="navbar-profile" href=""> H </a></li>
-						<li><a href="#" data-toggle="dropdown"> <i class="material-icons">&#xE3C7;</i>
-						</a>
-							<ul class="dropdown-menu pmu-caret">
-								<li class="active"><a href="#"><span>my profile</span></a></li>
-								<li><a href="#"><span>settings</span></a></li>
-							</ul></li>
+						 @include('partials._top_nav')
 					</ul>
 				</div>
 			</div>
@@ -101,17 +97,18 @@
 				<h4>Like what you see?</h4>
 				<div class="contact-us">
 					<div class="contact-us-form">
-						<form action="/api/user" method="post" v-on:submit.prevent="submitForm">
-							{!! csrf_field() !!} 
-								<input type="text" name="email" id="email"
-								class="email-input" placeholder="Send us an email" v-model="formInputs.email"/> 
-								
-							<input type="submit"
-								name="submit" class="submit-button" value="Send" /> <span
+						<form action="/api/user" method="post"
+							v-on:submit.prevent="submitForm">
+							{!! csrf_field() !!} <input type="text" name="email" id="email"
+								class="email-input" placeholder="Send us an email"
+								v-model="formInputs.email" /> <input type="submit" name="submit"
+								class="submit-button" value="Send" /> <span
 								class="required-field">Required</span>
 						</form>
-						<div v-if="successMessage" class="success-message">@{{ successMessage }}</div>
-						<div v-if="formErrors" class="success-message">@{{ formErrors[0] }}</div>
+						<div v-if="successMessage" class="success-message">@{{
+							successMessage }}</div>
+						<div v-if="formErrors" class="success-message">@{{ formErrors[0]
+							}}</div>
 					</div>
 					<ul class="social-list">
 						<li class="social-icon facebook"><a href="#" target="_blank"></a></li>

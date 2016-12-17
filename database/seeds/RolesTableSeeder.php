@@ -22,7 +22,7 @@ class RolesTableSeeder extends Seeder {
 				try {
 					Role::create ( [ 
 							'title' => $row->title,
-							'slug' => str_slug ( $row->title, '-' ) 
+							'slug' => str_slug ( $row->title, '_' ) 
 					] );
 				} catch ( QueryException $e ) {
 					die ( 'Some exception occured. <br/>' . $e->getMessage () );

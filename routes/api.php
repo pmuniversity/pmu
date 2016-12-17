@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
  * |
  */
 DB::listen ( function ($query) {
+	
 	/*
 	 * dump ( $query->sql );
 	 * dump ( $query->bindings );
@@ -25,4 +26,5 @@ Route::get ( '/user', function (Request $request) {
 Route::get ( '/topics/{level}', 'Api\TopicsController@index' );
 Route::get ( '/articles/{type}', 'Api\TopicsController@indexArticles' );
 Route::post ( '/user', 'Api\UsersController@store' );
+Route::post ( '/upvotes/{articleId}', 'Api\TopicsController@upvotes' );
 

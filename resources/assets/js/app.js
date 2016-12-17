@@ -57,8 +57,8 @@ Vue.component('tab', {
 				<div class="container">
 					<div id="top" class="detail-wrapper">
 						<!--Article block-->
-						<div v-for="article in articles.data" class="well">
-							<div class="media">
+						<div v-for="article in articles" class="well">
+							<div class="media" :article_id="article.id">
 								<div class="media-body">
 									<h2>{{ article.title }}</h2>
 									<ul>
@@ -73,7 +73,7 @@ Vue.component('tab', {
 									<div v-if="article.image" class="image-box"><img :src="article.image" /></div>
                         				<p v-if="article.description">{{ article.description }}...</p>
 									<div class="article-footer">
-										<a href="#" class="read">Read</a> <a class="vote"><i
+										<a href="#" class="read">Read</a> <a class="vote" v-bind:class="{ voted: upvoted }" @click="upvote"><i
 											class="material-icons">&#xE5C7;</i> Upvote <span class="count">{{ article.upvoteCount }}</span></a>
 									</div>
 								</div>
@@ -83,7 +83,7 @@ Vue.component('tab', {
 							</div>
 						</div>
 						<!--//Article block-->
-						<div v-if="hasMoreArticles" class="show-more">Show More</div>
+						<div v-if="hasMoreArticles" class="show-more" @click="loadMoreArticles">Show More</div>
 						<div v-if="errorMessage" class="show-more">{{ errorMessage }}</div>
 					</div>
 				</div>
@@ -99,7 +99,9 @@ Vue.component('tab', {
             isActive: false,
             articles: [],
             errorMessage: '',
-            hasMoreArticles: false            
+            hasMoreArticles: false,
+            page: 1,
+            upvoted: false
         };
     },
     computed: {
@@ -124,13 +126,32 @@ Vue.component('tab', {
 		getArticles() {
     		const topicId = $("#special-article span").text()
     		this.$http.get('/api/articles/' + this.name.toLowerCase().replace(/ /g, '-'), {params:  {topicId: topicId}} )
-    		.then((response) => {
-    			const data = response.body.data;
-    			this.articles = data.articles
-    			this.hasMoreArticles = data.pagination.hasMore
+    		.then((response) => {    			
+    			const responseData = response.body.data;
+    			this.articles = responseData.articles
+    			this.hasMoreArticles = responseData.pagination.hasMore
     		  }, (response) => {
     			 this.errorMessage = response.body.message
     		  });
+    	},
+    	/**
+    	 * Ajax loading articles
+    	 */
+    	loadMoreArticles() {
+    		this.page += 1
+    		const topicId = $("#special-article span").text()
+    		this.$http.get('/api/articles/' + this.name.toLowerCase().replace(/ /g, '-'), {params:  {topicId: topicId, page: this.page}} )
+    		.then((response) => {
+    			const responseData = response.body.data; 
+    			this.articles.push(responseData.articles)
+    			this.hasMoreArticles = responseData.pagination.hasMore
+    		  }, (response) => {
+    			 this.errorMessage = response.body.message
+    		  });
+    	},
+    	upvote() {
+    		console.log($(".media").attr("article_id"))
+    		this.upvoted = true;
     	}
     }
 });

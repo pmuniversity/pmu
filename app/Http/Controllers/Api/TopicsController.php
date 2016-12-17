@@ -94,23 +94,28 @@ class TopicsController extends Controller {
 	 */
 	public function indexArticles($type) {
 		// Set pagination
-		$perPage = $this->request->has ( 'perPage' ) ? $this->request->input ( 'perPage' ) : 5;
+		$perPage = $this->request->has ( 'perPage' ) ? $this->request->input ( 'perPage' ) : 2;
 		$page = ( int ) $this->request->input ( 'page', 1 );
 		
-		$topicId = $this->request->input('topicId');
+		$topicId = $this->request->input ( 'topicId' );
 		
 		$articles = $this->articleGestion->index ( $perPage, $topicId, $type );
+		
+		$formatArticles = [ ];
 		
 		if ($articles->total () === 0) {
 			return $this->respondNotFound ( 'No records found' );
 		}
 		
 		foreach ( $articles as $article ) {
-			$users [] = $this->articleGestion->formatResponse ( $article );
+			$formatArticles [] = $this->articleGestion->formatResponse ( $article );
 		}
 		
 		$data ['pagination'] = customizePaginator ( $articles, $page );
-		$data ['articles'] = $articles;
+		$data ['articles'] = $formatArticles;
 		return $this->respondWithSuccess ( 'success', $data );
+	}
+	public function upvotes($articleId) {
+		$this->respondOk ( 'success' );
 	}
 }

@@ -4,8 +4,7 @@ namespace PMU\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Storage;
-use App\Notifications\ConfirmEmail as ConfirmEmailNotification;
+use PMU\Notifications\ConfirmEmail as ConfirmEmailNotification;
 
 class User extends Authenticatable {
 	use Notifiable;
@@ -64,6 +63,14 @@ class User extends Authenticatable {
 	public function getStatus() {
 		return $this->role->slug;
 	}
+	/**
+	 * Get user role.
+	 *
+	 * @return string
+	 */
+	public function getRole() {
+		return $this->role->slug;
+	}
 	
 	/**
 	 * Check media all access.
@@ -91,7 +98,6 @@ class User extends Authenticatable {
 	public function accessMediasFolder() {
 		return $this->getStatus () != 'user';
 	}
-	
 	
 	/**
 	 * Send the email verification notification.

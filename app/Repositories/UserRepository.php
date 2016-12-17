@@ -30,6 +30,22 @@ class UserRepository extends BaseRepository {
 	}
 	
 	/**
+	 * Count the users for a role.
+	 *
+	 * @param string $role        	
+	 * @return int
+	 */
+	public function count($role = null) {
+		if ($role) {
+			return $this->model->whereHas ( 'role', function ($q) use ($role) {
+				$q->whereSlug ( $role );
+			} )->count ();
+		}
+		
+		return $this->model->count ();
+	}
+	
+	/**
 	 * Save the User.
 	 *
 	 * @param PMU\Models\User $user        	
