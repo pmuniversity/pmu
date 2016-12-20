@@ -1,13 +1,13 @@
 <template>
     <section class="common-section">
 			<div class="container">
-				<h2>BACHELOUR'S DEGREE</h2>
-				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-					eleifend ornare lorem. Aliquam gravida et elit sed vulputate</p>
+				<h2>BACHELOR'S DEGREE</h2>
+				<p>Get your Bachelor's Degree in Product Management (B.P.M) from PM University by taking eight core courses in a rigid curriculum designed by the leading Product Managers of Tech. Topics range from building great products, agile development and SCRUM to creating product roadmaps that lead to truly amazing products!
+</p>
 				<ul class="pm-list">
 					
 					<li v-for="(topic, index) in topics">
-					<a :class="{ active: index === 0 }" :href="topic.slug">
+					<a :href="topic.slug">
 							<div class="media">
 								<div class="media-left">
 									<span class="pm-list-count">{{ index += 1 }}.</span>

@@ -17,6 +17,7 @@ use PMU\Traits\ {
 use PMU\Http\Controllers\Controller;
 use DB, Auth;
 use PMU\Http\Requests\TopicRequest;
+use Image;
 
 class TopicsController extends Controller {
 	use ApiControllerTrait, FileUploadTrait;
@@ -213,8 +214,15 @@ else {
 			$level = Level::findOrFail ( $request->input ( 'level_id' ) );
 			$picture = '';
 			if ($request->hasFile ( 'picture' )) {
-				$result = $this->saveFiles ( $request );
-				$picture = $result->input ( 'picture' );
+				$file = $request->file ( 'picture' );
+				$fileName = generateFileName ( $file->getClientOriginalExtension () );
+				$webImage = Image::make ( $file );
+				$webPath = public_path ( "images/web/icons/" ) . $fileName;
+				$webImage->save ( $webPath );
+				
+				$mobileImage = Image::make ( $file );
+				$mobilePath = public_path ( "images/mobile/icons/" ) . $fileName;
+				$mobileImage->save ( $mobilePath );
 			}
 			$active = false;
 			if ($request->has ( 'active' )) {
@@ -222,7 +230,7 @@ else {
 			}
 			$inputs = array_merge ( $request->all (), [ 
 					'level_title' => $level->title,
-					'picture' => $picture,
+					'picture' => $fileName,
 					'active' => $active 
 			] );
 			$topic = $this->topicRepo->store ( $inputs, Auth::user ()->id );

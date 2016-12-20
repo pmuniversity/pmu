@@ -16,9 +16,10 @@ class CreateArticlesTable extends Migration {
 			$table->string ( 'source_url' )->nullable ();
 			$table->string ( 'title' )->nullable ();
 			$table->longText ( 'description' )->nullable ();
-			$table->string ( 'picture' )->nullable ();
+			$table->string ( 'file_path' )->nullable ();
+			$table->string ( 'video_url' )->nullable ();
 			$table->unsignedBigInteger ( 'author_id' )->nullable ();
-			$table->string ( 'author_name', 200 )->nulable ();
+			$table->string ( 'author_name', 200 )->nullable ();
 			$table->mediumText ( 'author_location' )->nullable ();
 			$table->string ( 'author_office' )->nullable ();
 			$table->string ( 'author_designation' )->nullable ();

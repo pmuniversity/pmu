@@ -32,15 +32,14 @@ class ArticlesTableSeeder extends Seeder {
 					$author = User::findOrFail ( $row->author_id );
 					Article::create ( [ 
 							'topic_id' => $row->topic_id,
-							'type_title' => $row->type,							
+							'type_title' => $row->type,
 							'source_url' => $row->url,
-							'title' => $title,
+							'title' => str_limit ( $title, 65 ),
 							'author_id' => $row->author_id,
 							'author_name' => $author->full_name,
 							'author_location' => $author->location,
 							'author_office' => $author->office,
-							'author_designation' => $author->designation,
-							'slug' => $this->generateSlug ( $content, $title ) 
+							'author_designation' => $author->designation 
 					] );
 				} catch ( QueryException $e ) {
 					die ( 'Some exception occured. <br/>' . $e->getMessage () );

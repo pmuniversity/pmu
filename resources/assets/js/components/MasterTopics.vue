@@ -2,12 +2,11 @@
     <section class="common-section">
 			<div class="container">
 				<h2>MASTER'S DEGREE</h2>
-				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-					eleifend ornare lorem. Aliquam gravida et elit sed vulputate</p>
+				<p>Already a Product Manager or think you've got the skills to go after a Master's Degree in Product Management? The Masters in Product Management Degree (M.P.M) is for you. Dig deeper into the discipline of product management and go past the core curriculum and dive into twenty advanced product management courses that truly put your skills to the test!</p>
 				<ul class="pm-list">
 					
 					<li v-for="(topic, index) in topics">
-					<a :class="{ active: index === 0 }" :href="topic.slug">
+					<a :href="topic.slug">
 							<div class="media">
 								<div class="media-left">
 									<span class="pm-list-count">{{ index += 1 }}.</span>

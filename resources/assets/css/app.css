@@ -843,7 +843,7 @@ a:hover.close {
 	color: #fff;
 }
 .common-section {
-	padding: 140px 0;
+	padding: 70px 0;
 	background-color: #fff;
 }
 .common-section h2 {
@@ -855,10 +855,11 @@ a:hover.close {
 }
 .common-section p {
 	font-size: 22px;
-	color: #757575;
+	color: #333;
 	margin: 0 0 60px;
 	text-align: center;
 	line-height: 30px;
+	font-weight: bold;
 }
 .pm-list {
 	list-style: none;
@@ -1304,7 +1305,7 @@ footer.common-section .social-list li a {
 }
 .inner-banner .caption p {
 	font-size: 22px;
-	line-height: 40px;
+	line-height: 36px;
 	color: #fff;
 }
 .inner-tabs {
@@ -1350,13 +1351,21 @@ footer.common-section .social-list li a {
 	font-size: 27px;
 	color: #333;
 	margin: 0 0 15px;
-	line-height: 1;
+	line-height: 1.2;
+}
+.detail-wrapper .well h2 a {
+	color: #333;
+	text-decoration:  none;
+}
+.detail-wrapper .well h2 a:hover {
+	color: #ff3366;
 }
 .detail-wrapper .well p {
 	font-size: 18px;
-	color: #333;
+	color: #212121;
 	margin: 0 0 15px;
 	line-height: 30px;
+	font-weight: bold;
 }
 .detail-wrapper .well ul {
 	margin: 0 0 15px;
@@ -1406,6 +1415,7 @@ footer.common-section .social-list li a {
 	border-color: #ccc;
 	background-color: #ccc;
 	cursor: default;
+	pointer-events: none;
 }
 .image-box {
 	margin: 0 0 15px;

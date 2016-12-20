@@ -2,12 +2,11 @@
     <section class="common-section">
 			<div class="container">
 				<h2>SPECIALIZATION</h2>
-				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-					eleifend ornare lorem. Aliquam gravida et elit sed vulputate</p>
+				<p>Dig deeper with specializations at PM University and go beyond mastering Product Management by specializing in analytics, email marketing, SEO, and more!</p>
 				<ul class="specialisation-list">
 					
 					<li v-for="(topic, index) in topics">
-					<a :class="{ active: index === 0 }" :href="topic.slug">
+					<a :href="topic.slug">
 							<div>
 								<img :src="topic.picture"
 									alt="Analytics" class="s-list-icon" />

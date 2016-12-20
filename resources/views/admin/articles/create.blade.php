@@ -34,6 +34,7 @@
 									<label class="control-label col-lg-2">Article type</label>
 									<div class="col-lg-10">
 										<select name="type_title" class="form-control">
+											<option value="top-10">Top 10</option>
 											<option value="books">Books</option>
 											<option value="videos">Videos</option>
 											<option value="interviews">Intervies</option>
@@ -72,6 +73,14 @@
 										upload:</label>
 									<div class="col-lg-10">
 										<input type="file" class="file-input" name="file_path">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-lg-2">Youtube URL <span
+										class="text-danger">*</span></label>
+									<div class="col-lg-10">
+										<input type="text" class="form-control" name="video_url"
+											value="{{ old('video_url') }}" />
 									</div>
 								</div>
 								<script>

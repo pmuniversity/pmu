@@ -26,5 +26,5 @@ Route::get ( '/user', function (Request $request) {
 Route::get ( '/topics/{level}', 'Api\TopicsController@index' );
 Route::get ( '/articles/{type}', 'Api\TopicsController@indexArticles' );
 Route::post ( '/user', 'Api\UsersController@store' );
-Route::post ( '/upvotes/{articleId}', 'Api\TopicsController@upvotes' );
+Route::patch ( '/upvotes/{articleId}', 'Api\TopicsController@upvotes' );
 

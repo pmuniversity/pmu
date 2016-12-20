@@ -10,7 +10,10 @@ use PMU\Repositories\ {
 use PMU\Traits\ApiControllerTrait;
 use PMU\Http\Controllers\Controller;
 use Cache;
-use PMU\Models\Level;
+use PMU\Models\ {
+	Level, 
+	Article
+};
 use Illuminate\Database\ {
 	Eloquent\ModelNotFoundException, 
 	QueryException
@@ -94,7 +97,7 @@ class TopicsController extends Controller {
 	 */
 	public function indexArticles($type) {
 		// Set pagination
-		$perPage = $this->request->has ( 'perPage' ) ? $this->request->input ( 'perPage' ) : 2;
+		$perPage = $this->request->has ( 'perPage' ) ? $this->request->input ( 'perPage' ) : 5;
 		$page = ( int ) $this->request->input ( 'page', 1 );
 		
 		$topicId = $this->request->input ( 'topicId' );
@@ -115,7 +118,16 @@ class TopicsController extends Controller {
 		$data ['articles'] = $formatArticles;
 		return $this->respondWithSuccess ( 'success', $data );
 	}
+	/**
+	 *
+	 * @param integer $articleId        	
+	 */
 	public function upvotes($articleId) {
-		$this->respondOk ( 'success' );
+		$article = $this->articleGestion->getById ( $articleId );
+		$upvoteCnt = $article->upvotes_count + 1;
+		Article::find ( $articleId )->increment ( 'upvotes_count' );
+		return $this->respondWithSuccess( 'success', [
+				'count' => $upvoteCnt
+		] );
 	}
 }

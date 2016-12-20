@@ -58,9 +58,9 @@ Vue.component('tab', {
 					<div id="top" class="detail-wrapper">
 						<!--Article block-->
 						<div v-for="article in articles" class="well">
-							<div class="media" :article_id="article.id">
+							<div class="media">
 								<div class="media-body">
-									<h2>{{ article.title }}</h2>
+									<h2><a :href="article.sourceUrl" target="_blank">{{ article.title }}</a></h2>
 									<ul>
 										<li>{{ article.authorName }}</li>
 										<li><span class="dot"></span></li>
@@ -73,7 +73,7 @@ Vue.component('tab', {
 									<div v-if="article.image" class="image-box"><img :src="article.image" /></div>
                         				<p v-if="article.description">{{ article.description }}...</p>
 									<div class="article-footer">
-										<a href="#" class="read">Read</a> <a class="vote" v-bind:class="{ voted: upvoted }" @click="upvote"><i
+										<a href="#" class="read">Read</a> <a :id="article.id" class="vote" @click="upvote(article.id)"><i
 											class="material-icons">&#xE5C7;</i> Upvote <span class="count">{{ article.upvoteCount }}</span></a>
 									</div>
 								</div>
@@ -143,15 +143,20 @@ Vue.component('tab', {
     		this.$http.get('/api/articles/' + this.name.toLowerCase().replace(/ /g, '-'), {params:  {topicId: topicId, page: this.page}} )
     		.then((response) => {
     			const responseData = response.body.data; 
-    			this.articles.push(responseData.articles)
+    			for (var i = 0; i < responseData.articles.length; i++) {
+                   this.articles.push(responseData.articles[i]);
+                 }    			
     			this.hasMoreArticles = responseData.pagination.hasMore
     		  }, (response) => {
     			 this.errorMessage = response.body.message
     		  });
     	},
-    	upvote() {
-    		console.log($(".media").attr("article_id"))
-    		this.upvoted = true;
+    	upvote(id) {
+    		this.$http.patch('/api/upvotes/' + id).then((response) => {    			
+    			$('a#' + id).addClass('voted');
+    			$("a#" + id + " .count").text(response.body.data.count)
+    			}),(response) => {    				
+    		}			  		
     	}
     }
 });

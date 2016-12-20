@@ -39,7 +39,7 @@
 					<ul class="navbar-nav  navbar-right">
 						<li><a href="#"><i class="material-icons">&#xE8B6;</i></a></li>
 						<li><a class="navbar-profile" href=""> H </a></li>
-						 @include('partials._top_nav')
+						@include('partials._top_nav')
 					</ul>
 				</div>
 			</div>
@@ -53,9 +53,14 @@
 					<span>Product Manager University</span>
 				</h1>
 				<p>
-					<span>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-						Morbi eleifend ornare Aliquam gravida et elit sed vulputate
-						pharetra mattis risus vehicula.</span>
+					<span>PM University was founded by Product Managers and Serial
+						Entrepreneurs Rajith Shaji and Matthieu McClintock in June of 2016
+						to share their experiences in product management and
+						entrepreneurship with the world. The aim of PM University is to
+						create a forum for product managers to share experience and
+						knowledge with one another as well as provide the product managers
+						of tomorrow with the knowledge and resources needed to hit the
+						ground running with a career in product management.</span>
 				</p>
 			</div>
 		</section>
@@ -81,7 +86,7 @@
 				<div class="special-article" id="special-article">
 					<span style="display: none;">{{ $topic->id }} </span>
 					<h2>{{ $topic->title }}</h2>
-					<p>{{ $topic->description }}</p>
+					<p>{!! $topic->description !!}</p>
 				</div>
 				<div class="text-center">
 					<a class="read-more" href="#">Read more</a>
@@ -124,7 +129,7 @@
 
 		<!--Copy Rights-->
 		<div class="copyrights">
-			<p>© Looptabs | All rights reserved</p>
+			<p>&copy; Looptabs | All rights reserved</p>
 		</div>
 		<!--//Copy Rights-->
 	</div>
