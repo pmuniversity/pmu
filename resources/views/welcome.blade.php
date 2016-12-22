@@ -179,13 +179,18 @@
 				<h4>Like what you see?</h4>
 				<div class="contact-us">
 					<div class="contact-us-form">
-						<form>
-							<input type="text" name="email" class="email-input"
-								placeholder="Send us an email" /> <input type="button"
-								name="submit" class="submit-button" value="Send" /> <span
+						<form action="/api/user" method="post"
+							v-on:submit.prevent="submitForm">
+							{!! csrf_field() !!} <input type="text" name="email" id="email"
+								class="email-input" placeholder="Send us an email"
+								v-model="formInputs.email" /> <input type="submit"
+								name="submit" class="submit-button" value="Send" :disabled="disabledButton" /> <span
 								class="required-field">Required</span>
 						</form>
-						<div class="success-message">Success message will come here</div>
+						<div v-if="successMessage" class="success-message">@{{
+							successMessage }}</div>
+						<div v-if="formErrors" class="success-message">@{{ formErrors[0]
+							}}</div>
 					</div>
 					<ul class="social-list">
 						<li class="social-icon facebook"><a href="#" target="_blank"></a></li>

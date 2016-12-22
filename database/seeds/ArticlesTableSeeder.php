@@ -38,7 +38,7 @@ class ArticlesTableSeeder extends Seeder {
 							'author_id' => $row->author_id,
 							'author_name' => $author->full_name,
 							'author_location' => $author->location,
-							'author_office' => $author->office,
+							'author_organization' => $author->office,
 							'author_designation' => $author->designation 
 					] );
 				} catch ( QueryException $e ) {

@@ -208,7 +208,7 @@ else {
 	}
 	public function store(TopicRequest $request) {
 		$redirectUrl = 'admin/topics/create';
-		$message = trans ( 'messages.something_went_wrong' );
+		$message = trans ( 'errors.something_went_wrong' );
 		$errorLevel = 'danger';
 		try {
 			$level = Level::findOrFail ( $request->input ( 'level_id' ) );
@@ -230,7 +230,7 @@ else {
 			}
 			$inputs = array_merge ( $request->all (), [ 
 					'level_title' => $level->title,
-					'picture' => $fileName,
+					'picture' => $fileName ?? null,
 					'active' => $active 
 			] );
 			$topic = $this->topicRepo->store ( $inputs, Auth::user ()->id );

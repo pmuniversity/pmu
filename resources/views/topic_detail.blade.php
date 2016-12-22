@@ -37,8 +37,6 @@
 
 				<div class="navbar-collapse collapse">
 					<ul class="navbar-nav  navbar-right">
-						<li><a href="#"><i class="material-icons">&#xE8B6;</i></a></li>
-						<li><a class="navbar-profile" href=""> H </a></li>
 						@include('partials._top_nav')
 					</ul>
 				</div>
@@ -50,17 +48,10 @@
 		<section class="inner-banner">
 			<div class="caption">
 				<h1>
-					<span>Product Manager University</span>
+					<span>{{ $topic->title }}</span>
 				</h1>
 				<p>
-					<span>PM University was founded by Product Managers and Serial
-						Entrepreneurs Rajith Shaji and Matthieu McClintock in June of 2016
-						to share their experiences in product management and
-						entrepreneurship with the world. The aim of PM University is to
-						create a forum for product managers to share experience and
-						knowledge with one another as well as provide the product managers
-						of tomorrow with the knowledge and resources needed to hit the
-						ground running with a career in product management.</span>
+					<span>{!! $topic->summary !!}</span>
 				</p>
 			</div>
 		</section>
@@ -106,8 +97,8 @@
 							v-on:submit.prevent="submitForm">
 							{!! csrf_field() !!} <input type="text" name="email" id="email"
 								class="email-input" placeholder="Send us an email"
-								v-model="formInputs.email" /> <input type="submit" name="submit"
-								class="submit-button" value="Send" /> <span
+								v-model="formInputs.email" /> <input type="submit"
+								name="submit" class="submit-button" value="Send" :disabled="disabledButton" /> <span
 								class="required-field">Required</span>
 						</form>
 						<div v-if="successMessage" class="success-message">@{{

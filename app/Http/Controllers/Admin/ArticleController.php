@@ -9,6 +9,7 @@ use PMU\Models\ {
 };
 use PMU\Repositories\ArticleRepository;
 use Auth, DB;
+use Image;
 use Illuminate\Http\Request;
 use PMU\Traits\FileUploadTrait;
 
@@ -131,13 +132,19 @@ else {
 		$message = trans ( 'errors.something_went_wrong' );
 		$errorLevel = 'danger';
 		try {
-			$filePath = '';
 			if ($request->hasFile ( 'file_path' )) {
-				$result = $this->saveFiles ( $request );
-				$filePath = $result->input ( 'file_path' );
+				$file = $request->file ( 'file_path' );
+				$fileName = generateFileName ( $file->getClientOriginalExtension () );
+				$webImage = Image::make ( $file );
+				$webPath = public_path ( "images/web/articles/" ) . $fileName;
+				$webImage->save ( $webPath );
+				
+				$mobileImage = Image::make ( $file );
+				$mobilePath = public_path ( "images/mobile/articles/" ) . $fileName;
+				$mobileImage->save ( $mobilePath );
 			}
 			$inputs = array_merge ( $request->all (), [ 
-					'file_path' => $filePath 
+					'file_path' => $fileName ?? null
 			] );
 			$topic = $this->articleGestion->store ( $inputs, Auth::user ()->id );
 			

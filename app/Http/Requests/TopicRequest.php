@@ -20,8 +20,9 @@ class TopicRequest extends Request {
 	public function rules() {
 		return [ 
 				'level_id' => 'required|exists:levels,id',
-				'title' => 'required|max:255|min:10',
-				'description' => 'required|max:65000|min:100',
+				'title' => 'required|max:255|min:3',
+				'summary' => 'required',
+				'description' => 'required|max:65000|min:10',
 				'picture' => 'sometimes',
 				'active' => 'sometimes',
 				'file' => 'sometimes|image',

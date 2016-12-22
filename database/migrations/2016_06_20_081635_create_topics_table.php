@@ -13,6 +13,7 @@ class CreateTopicsTable extends Migration {
 			$table->unsignedMediumInteger ( 'level_id' )->default ( 1 )->index ();
 			$table->string ( 'level_title', 50 )->nullable ();
 			$table->string ( 'title' )->nullable ();
+			$table->mediumText ( 'summary' )->nullable ();
 			$table->longText ( 'description' )->nullable ();
 			$table->string ( 'picture', 150 )->nullable ();
 			$table->unsignedBigInteger ( 'author_id' )->nullable ();

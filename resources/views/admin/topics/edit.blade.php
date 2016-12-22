@@ -52,9 +52,18 @@
 											value="{{ $topic->title }}" />
 									</div>
 								</div>
+								<div class="form-group">
+									<label class="control-label col-lg-2">Summary <span
+										class="text-danger">*</span></label>
+									<div class="col-lg-10">
+										<textarea name="summary" id="summary" rows="15" cols="80">
+											{{ $topic->summary }}
+											</textarea>
+									</div>
+								</div>
 
 								<div class="form-group">
-									<label class="control-label col-lg-2">Textarea <span
+									<label class="control-label col-lg-2">Description <span
 										class="text-danger">*</span></label>
 									<div class="col-lg-10">
 										<textarea name="description" id="editor1" rows="15" cols="80">
@@ -72,6 +81,7 @@
 								</div>
 								<script>
 										CKEDITOR.replace( 'editor1');
+										CKEDITOR.replace( 'summary');
 									</script>
 							</fieldset>
 						</div>

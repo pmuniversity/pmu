@@ -15,10 +15,15 @@ storage/docs/api-docs.json
 public/vendor/
 public/uploads/
 storage/logs/
+public/templateEditor/kcfinder/*
+public/js/*
+public/css/*
+public/rev-manifest.json
+public/images/**
+public/fonts/
 
 # Swagger API documentation
 storage/docs/
-app/Http/Controllers/Api/V1/AppBaseController.php
 
 # Laravel 4 specific
 bootstrap/compiled.php

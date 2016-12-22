@@ -21,7 +21,7 @@ class CreateArticlesTable extends Migration {
 			$table->unsignedBigInteger ( 'author_id' )->nullable ();
 			$table->string ( 'author_name', 200 )->nullable ();
 			$table->mediumText ( 'author_location' )->nullable ();
-			$table->string ( 'author_office' )->nullable ();
+			$table->string ( 'author_organization' )->nullable ();
 			$table->string ( 'author_designation' )->nullable ();
 			$table->string ( 'author_picture' )->nullable ();
 			$table->unsignedInteger ( 'sequence' )->default ( 1 );

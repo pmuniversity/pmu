@@ -73,8 +73,7 @@ Vue.component('tab', {
 									<div v-if="article.image" class="image-box"><img :src="article.image" /></div>
                         				<p v-if="article.description">{{ article.description }}...</p>
 									<div class="article-footer">
-										<a href="#" class="read">Read</a> <a :id="article.id" class="vote" @click="upvote(article.id)"><i
-											class="material-icons">&#xE5C7;</i> Upvote <span class="count">{{ article.upvoteCount }}</span></a>
+										<a :href="article.sourceUrl" target="_blank" class="read">Read</a>
 									</div>
 								</div>
 								<div class="media-right" v-if="article.articleType === 'videos'">
@@ -166,7 +165,8 @@ new Vue({
     data: {
 	    formInputs: {},
 	    formErrors: {},
-	    successMessage: ''
+	    successMessage: '',
+	    disabledButton: false
     },
     methods: {
     	submitForm: function(e) {
@@ -181,7 +181,10 @@ new Vue({
 				}
 			  })
 			.then((response) => {
-				this.successMessage = response.body.message				
+				this.successMessage = response.body.message
+				//$('input[type="submit"]').prop('disabled', true);
+				this.disabledButton = true
+				this.formInputs.email = ''
 			}, (response) => {
 			    var errors = response.body.email;
 			    this.formErrors = errors;

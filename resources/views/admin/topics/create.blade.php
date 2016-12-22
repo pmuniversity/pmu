@@ -34,9 +34,9 @@
 									<label class="control-label col-lg-2">Level</label>
 									<div class="col-lg-10">
 										<select name="level_id" class="form-control">
-											<option value="1">Bachelore</option>
-											<option value="2">Master</option>
-											<option value="3">Specialization</option>
+											<option value="1" @if(old('level_id') == 1) selected @endif>Bachelore</option>
+											<option value="2" @if(old('level_id') == 2) selected @endif>Master</option>
+											<option value="3" @if(old('level_id') == 3) selected @endif>Specialization</option>
 										</select>
 									</div>
 								</div>
@@ -48,9 +48,18 @@
 											value="{{ old('title') }}" />
 									</div>
 								</div>
+								<div class="form-group">
+									<label class="control-label col-lg-2">Summary <span
+										class="text-danger">*</span></label>
+									<div class="col-lg-10">
+										<textarea name="summary" id="summary" rows="15" cols="80">
+											{{ old('summary') }}
+											</textarea>
+									</div>
+								</div>
 
 								<div class="form-group">
-									<label class="control-label col-lg-2">Textarea <span
+									<label class="control-label col-lg-2">Description <span
 										class="text-danger">*</span></label>
 									<div class="col-lg-10">
 										<textarea name="description" id="editor1" rows="15" cols="80">
@@ -70,11 +79,12 @@
 									<label class="control-label col-lg-2">Mark to publish <span
 										class="text-danger">*</span></label>
 									<div class="col-lg-1">
-										<input type="checkbox" class="form-control" name="active"/>
+										<input type="checkbox" class="form-control" name="active" @if(old('active')) checked @endif />
 									</div>
 								</div>
 								<script>
 										CKEDITOR.replace( 'editor1');
+										CKEDITOR.replace( 'summary');
 									</script>
 							</fieldset>
 						</div>

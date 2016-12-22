@@ -23,11 +23,12 @@ class ArticleRequest extends Request {
 				'type_title' => 'required',
 				'source_url' => 'required|url|max:255',
 				'title' => 'required|max:255',
-				'description' => 'required|max:65000',
+				'description' => 'sometimes',
 				'file_path' => 'sometimes|image',
 				'video_url' => 'sometimes|url',
 				'author_name' => 'sometimes',
-				'author_office' => 'sometimes',
+				'author_organization' => 'sometimes',
+				'author_location' => 'sometimes',
 				'author_designation' => 'sometimes',
 				'author_picture' => 'sometimes|image' 
 		];

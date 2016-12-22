@@ -34,11 +34,11 @@
 									<label class="control-label col-lg-2">Article type</label>
 									<div class="col-lg-10">
 										<select name="type_title" class="form-control">
-											<option value="top-10">Top 10</option>
-											<option value="books">Books</option>
-											<option value="videos">Videos</option>
-											<option value="interviews">Intervies</option>
-											<option value="notes">Notes</option>
+											<option value="top-10" @if(old('type_title') === 'top-10') selected @endif>Top 10</option>
+											<option value="books" @if(old('type_title') === 'books') selected @endif>Books</option>
+											<option value="videos" @if(old('type_title') === 'videos') selected @endif>Videos</option>
+											<option value="interviews" @if(old('type_title') === 'interviews') selected @endif>Intervies</option>
+											<option value="notes" @if(old('type_title') === 'notes') selected @endif>Notes</option>
 										</select>
 									</div>
 								</div>
@@ -60,8 +60,7 @@
 								</div>
 
 								<div class="form-group">
-									<label class="control-label col-lg-2">Textarea <span
-										class="text-danger">*</span></label>
+									<label class="control-label col-lg-2">Description </label>
 									<div class="col-lg-10">
 										<textarea name="description" id="editor1" rows="15" cols="80">
 											{{ old('description') }}
@@ -76,8 +75,7 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="control-label col-lg-2">Youtube URL <span
-										class="text-danger">*</span></label>
+									<label class="control-label col-lg-2">Youtube URL </label>
 									<div class="col-lg-10">
 										<input type="text" class="form-control" name="video_url"
 											value="{{ old('video_url') }}" />
@@ -91,28 +89,33 @@
 						<div class="tab-pane" id="bottom-divided-tab2">
 							<fieldset class="content-group">
 								<div class="form-group">
-									<label class="control-label col-lg-2">Name</label>
+									<label class="control-label col-lg-2">Name <span
+										class="text-danger">*</span></label>
 									<div class="col-lg-10">
 										<input type="text" class="form-control" name="author_name"
 											value="{{ old('author_name') }}" />
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="control-label col-lg-2">Location</label>
+									<label class="control-label col-lg-2">Location <span
+										class="text-danger">*</span></label>
 									<div class="col-lg-10">
 										<input type="text" class="form-control" name="author_location"
 											value="{{ old('author_location') }}" />
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="control-label col-lg-2">Office</label>
+									<label class="control-label col-lg-2">Organization <span
+										class="text-danger">*</span></label>
 									<div class="col-lg-10">
-										<input type="text" class="form-control" name="author_office"
-											value="{{ old('author_office') }}" />
+										<input type="text" class="form-control"
+											name="author_organization"
+											value="{{ old('author_organization') }}" />
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="control-label col-lg-2">Designation</label>
+									<label class="control-label col-lg-2">Designation <span
+										class="text-danger">*</span></label>
 									<div class="col-lg-10">
 										<input type="text" class="form-control"
 											name="author_designation"

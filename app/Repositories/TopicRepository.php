@@ -31,10 +31,10 @@ class TopicRepository extends BaseRepository {
 	 * @return Illuminate\Support\Collection
 	 */
 	public function indexByLevel($levelId) {
-		return $this->model->where ( 'level_id', $levelId )->select ( 'id', 'title', 'slug', 'level_title as levelTitle', 'picture' )->latest ()->get ();
+		return $this->model->where ( 'level_id', $levelId )->select ( 'id', 'title', 'summary', 'slug', 'level_title as levelTitle', 'picture' )->latest ()->get ();
 	}
 	public function show($slug) {
-		return $this->model->whereSlug ( $slug )->select ( 'id', 'title', 'description', 'slug', 'level_title as levelTitle', 'picture' )->firstOrFail ();
+		return $this->model->whereSlug ( $slug )->select ( 'id', 'title', 'summary', 'description', 'slug', 'level_title as levelTitle', 'picture' )->firstOrFail ();
 	}
 	/**
 	 * Count the users for a role.
@@ -75,8 +75,9 @@ class TopicRepository extends BaseRepository {
 	public function saveTopic($topic, $inputs, $userId = null) {
 		$topic->level_id = ( int ) $inputs ['level_id'];
 		$topic->level_title = $inputs ['level_title'];
-		$topic->title = ucwords ( strtolower ( $inputs ['title'] ) );
-		$topic->description = ucwords ( $inputs ['description'] );
+		$topic->title = ucwords ( strtolower ( trim ( $inputs ['title'] ) ) );
+		$topic->summary = ucwords ( trim ( $inputs ['summary'] ) );
+		$topic->description = ucwords ( trim ( $inputs ['description'] ) );
 		$topic->picture = $inputs ['picture'] ?? null;
 		$topic->author_name = isset ( $inputs ['author_name'] ) ? ucwords ( strtolower ( $inputs ['author_name'] ) ) : null;
 		$topic->author_location = isset ( $inputs ['author_location'] ) ? ucwords ( strtolower ( $inputs ['author_location'] ) ) : null;
@@ -87,7 +88,7 @@ class TopicRepository extends BaseRepository {
 		$topic->meta_title = $inputs ['meta_title'] ?? null;
 		$topic->meta_description = $inputs ['meta_description'] ?? null;
 		$topic->meta_keywords = $inputs ['meta_keywords'] ?? null;
-		$topic->slug = $this->generateSlug ( $topic, $inputs ['title'] );
+		$topic->slug = isset ( $topic->id ) ? $this->generateSlug ( $topic, $inputs ['title'], $topic->id ) : $this->generateSlug ( $topic, $inputs ['title'] );
 		$topic->active = $inputs ['active'] ?? 1;
 		$topic->read_time = articleReadTime ( $inputs ['title'] );
 		if ($userId) {
