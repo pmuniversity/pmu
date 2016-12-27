@@ -30,7 +30,7 @@ class TopicsTableSeeder extends Seeder {
 					Topic::create ( [ 
 							'title' => ucwords ( strtolower ( $row->title ) ),
 							'description' => Lipsum::medium ()->link ()->html ( 8 ),
-							'picture' => $row->picture ?? null,
+							'picture' => $row->picture ? 'images/topics/web/' . $row->picture : null,
 							'level_id' => ( int ) $level->id,
 							'level_title' => $level->title,
 							'author_id' => ( int ) $row->created_by,

@@ -22,6 +22,7 @@ class LevelsTableSeeder extends Seeder {
 				try {
 					Level::create ( [ 
 							'title' => $row->title,
+							'description' => $row->description,
 							'slug' => str_slug ( $row->title ) 
 					] );
 				} catch ( QueryException $e ) {

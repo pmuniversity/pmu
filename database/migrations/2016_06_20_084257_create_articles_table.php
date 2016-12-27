@@ -9,9 +9,9 @@ class CreateArticlesTable extends Migration {
 	 */
 	public function up() {
 		Schema::create ( 'articles', function (Blueprint $table) {
-			$table->bigIncrements ( 'id' );
+			$table->increments ( 'id' );
 			$table->unsignedInteger ( 'topic_id' )->index ();
-			
+			$table->string ( 'topic_title' )->nullable ();
 			$table->string ( 'type_title' )->nullable ();
 			$table->string ( 'source_url' )->nullable ();
 			$table->string ( 'title' )->nullable ();
@@ -24,7 +24,8 @@ class CreateArticlesTable extends Migration {
 			$table->string ( 'author_organization' )->nullable ();
 			$table->string ( 'author_designation' )->nullable ();
 			$table->string ( 'author_picture' )->nullable ();
-			$table->unsignedInteger ( 'sequence' )->default ( 1 );
+			$table->unsignedInteger ( 'top10_order' )->default ( 1 );
+			$table->unsignedInteger ( 'latest_order' )->default ( 1 );
 			$table->unsignedTinyInteger ( 'active' )->default ( 1 )->index ();
 			$table->unsignedInteger ( 'upvotes_count' )->default ( 0 );
 			$table->unsignedInteger ( 'downvotes_count' )->default ( 0 );

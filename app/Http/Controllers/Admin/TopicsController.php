@@ -17,7 +17,6 @@ use PMU\Traits\ {
 use PMU\Http\Controllers\Controller;
 use DB, Auth;
 use PMU\Http\Requests\TopicRequest;
-use Image;
 
 class TopicsController extends Controller {
 	use ApiControllerTrait, FileUploadTrait;
@@ -116,7 +115,24 @@ else {
 					'level_title' => $topic->level_title,
 					'created_at' => date ( 'M j, Y', strtotime ( $topic->created_at ) ),
 					'action' => "<span class='text-center'>" . $viewBtn . " <a href='/admin/topics/" . $topic->id . "/edit' style='color:inherit'><i class='icon-pencil3'></i></a> " . $deleteBtn . '</span>',
-					'articles' => "<span class='text-center'> <a title='Add an article' href='/admin/articles/create?topicId=" . $topic->id . "' style='color:inherit'><i class='icon-plus-circle2'></i></a> <a title='List out articles' href='/admin/articles?topicId=" . $topic->id . "' style='color:inherit'><i class='icon-list-unordered'></i></a> </span>" 
+					'articles' => "<span class='text-center'> <a title='Add an article' href='/admin/articles/create?topicId=" . $topic->id . "' style='color:inherit'><i class='icon-plus-circle2'></i></a> 
+					<a title='List out articles' href='/admin/articles?topicId=" . $topic->id . "' style='color:inherit'><i class='icon-list-unordered'></i></a>
+					<a><ul class='icons-list'>
+											<li class='dropdown'>
+												<a href='#' class='dropdown-toggle' data-toggle='dropdown'>
+													<i class='icon-menu9'></i>
+												</a>
+
+												<ul class='dropdown-menu dropdown-menu-right'>
+													<li><a href='/admin/artcles-by-type/latest/" . $topic->id . "'><i class='icon-file-pdf'></i> Latest</a></li>
+													<li><a href='/admin/artcles-by-type/top10/" . $topic->id . "'><i class='icon-file-excel'></i> Top10</a></li>
+													<li><a href='/admin/artcles-by-type/books/" . $topic->id . "'><i class='icon-file-word'></i> Books</a></li>
+													<li><a href='/admin/artcles-by-type/videos/" . $topic->id . "'><i class='icon-file-word'></i> Videos</a></li>
+													<li><a href='/admin/artcles-by-type/interviews/" . $topic->id . "'><i class='icon-file-word'></i> Interviews</a></li>
+												</ul>
+											</li>
+										</ul> </a>
+					</span>" 
 			];
 		}
 		/* Response to client before JSON encoding */
@@ -188,7 +204,24 @@ else {
 					'level_title' => $topic->level_title,
 					'created_at' => date ( 'M j, Y', strtotime ( $topic->created_at ) ),
 					'action' => "<span class='text-center'>" . $viewBtn . " <a href='/admin/topics/" . $topic->id . "/edit' style='color:inherit'><i class='icon-pencil3'></i></a> " . $deleteBtn . '</span>',
-					'articles' => "<span class='text-center'> <a title='Add an article' href='/admin/articles/create?topicId=" . $topic->id . "' style='color:inherit'><i class='icon-plus-circle2'></i></a> <a title='List out articles' href='/admin/articles?topicId=" . $topic->id . "' style='color:inherit'><i class='icon-list-unordered'></i></a> </span>" 
+					'articles' => "<span class='text-center'> <a title='Add an article' href='/admin/articles/create?topicId=" . $topic->id . "' style='color:inherit'><i class='icon-plus-circle2'></i></a> <a title='List out articles' href='/admin/articles?topicId=" . $topic->id . "' style='color:inherit'><i class='icon-list-unordered'></i></a> 
+					
+					<a><ul class='icons-list'>
+											<li class='dropdown'>
+												<a href='#' class='dropdown-toggle' data-toggle='dropdown'>
+													<i class='icon-menu9'></i>
+												</a>
+
+												<ul class='dropdown-menu dropdown-menu-right'>
+													<li><a href='/admin/artcles-by-type/latest/" . $topic->id . "'><i class='icon-file-pdf'></i> Latest</a></li>
+													<li><a href='/admin/artcles-by-type/top10/" . $topic->id . "'><i class='icon-file-excel'></i> Top10</a></li>
+													<li><a href='/admin/artcles-by-type/books/" . $topic->id . "'><i class='icon-file-word'></i> Books</a></li>
+													<li><a href='/admin/artcles-by-type/videos/" . $topic->id . "'><i class='icon-file-word'></i> Videos</a></li>
+													<li><a href='/admin/artcles-by-type/interviews/" . $topic->id . "'><i class='icon-file-word'></i> Interviews</a></li>
+												</ul>
+											</li>
+										</ul> </a>
+					</span>" 
 			];
 		}
 		
@@ -216,13 +249,8 @@ else {
 			if ($request->hasFile ( 'picture' )) {
 				$file = $request->file ( 'picture' );
 				$fileName = generateFileName ( $file->getClientOriginalExtension () );
-				$webImage = Image::make ( $file );
-				$webPath = public_path ( "images/web/icons/" ) . $fileName;
-				$webImage->save ( $webPath );
-				
-				$mobileImage = Image::make ( $file );
-				$mobilePath = public_path ( "images/mobile/icons/" ) . $fileName;
-				$mobileImage->save ( $mobilePath );
+				$webFilePath = $file->storeAs ( 'public/images/topics/mobile', $fileName );
+				$filePath = $file->storeAs ( 'public/images/topics/web', $fileName );
 			}
 			$active = false;
 			if ($request->has ( 'active' )) {
@@ -230,7 +258,7 @@ else {
 			}
 			$inputs = array_merge ( $request->all (), [ 
 					'level_title' => $level->title,
-					'picture' => $fileName ?? null,
+					'picture' => $filePath ?? null,
 					'active' => $active 
 			] );
 			$topic = $this->topicRepo->store ( $inputs, Auth::user ()->id );

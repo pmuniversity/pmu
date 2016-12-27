@@ -12,6 +12,7 @@ use Auth, DB;
 use Image;
 use Illuminate\Http\Request;
 use PMU\Traits\FileUploadTrait;
+use PMU\Models\Topic;
 
 class ArticleController extends Controller {
 	use FileUploadTrait;
@@ -135,16 +136,11 @@ else {
 			if ($request->hasFile ( 'file_path' )) {
 				$file = $request->file ( 'file_path' );
 				$fileName = generateFileName ( $file->getClientOriginalExtension () );
-				$webImage = Image::make ( $file );
-				$webPath = public_path ( "images/web/articles/" ) . $fileName;
-				$webImage->save ( $webPath );
-				
-				$mobileImage = Image::make ( $file );
-				$mobilePath = public_path ( "images/mobile/articles/" ) . $fileName;
-				$mobileImage->save ( $mobilePath );
+				$webFilePath = $file->storeAs ( 'public/images/articles/mobile', $fileName );
+				$filePath = $file->storeAs ( 'public/images/articles/web', $fileName );
 			}
 			$inputs = array_merge ( $request->all (), [ 
-					'file_path' => $fileName ?? null
+					'file_path' => $filePath ?? null
 			] );
 			$topic = $this->articleGestion->store ( $inputs, Auth::user ()->id );
 			
@@ -184,5 +180,104 @@ else {
 		}
 		flash ()->overlay ( $message, 'Danger' )->important ();
 		return redirect ( 'admin/articles?topicId=' . $article->topic_id );
+	}
+	public function indexByType($type, $topicId) {
+		$topic = Topic::find ( $topicId );
+		return view ( 'admin.articles.index_by_type', [ 
+				'pageTitle' => ucwords ( $type ) . ' Articles',
+				'articleType' => $type,
+				'topicId' => $topicId,
+				'topicTitle' => $topic->title 
+		] );
+	}
+	/**
+	 * Display a listing users.
+	 *
+	 * @param \App\Repositories\RoleRepository $roleRepository        	
+	 * @param string $role        	
+	 * @return \Illuminate\Http\Response
+	 */
+	public function ajaxIndexByType() {
+		/* Useful $_POST Variables coming from the plugin */
+		$draw = $this->request->input ( 'draw' ); // counter used by DataTables to ensure that the Ajax returns from server-side processing requests are drawn in sequence by DataTables
+		$order = $this->request->input ( 'order' );
+		$orderByColumnIndex = $order [0] ['column']; // index of the sorting column (0 index based - i.e. 0 is the first record)
+		$columns = $this->request->input ( 'columns' );
+		$orderBy = $columns [$orderByColumnIndex] ['data']; // Get name of the sorting column from its index
+		$orderType = $order [0] ['dir']; // ASC or DESC
+		$offset = $this->request->input ( 'start' ); // Paging first record indicator.
+		$limit = $this->request->input ( 'length' ); // Number of records that the table can display in the current draw
+		/* END of POST variables */
+		
+		$topicId = $this->request->input ( 'topicId' );
+		$articleType = $this->request->input ( 'articleType' );
+		if (($orderBy === 'sequence' or $orderBy === 'id') && $articleType === 'latest') {
+			$orderBy = 'latest_order';
+		}
+		if (($orderBy === 'sequence' or $orderBy === 'id') && $articleType === 'top10') {
+			$orderBy = 'top10_order';
+		}
+		if (($orderBy === 'sequence') && ($articleType === 'books' or $articleType === 'videos' or $articleType === 'interviews')) {
+			$orderBy = 'id';
+		}
+		$recordsTotal = $this->articleGestion->count ( $topicId );
+		
+		/* SEARCH CASE : Filtered data */
+		if (! empty ( $this->request->input ( 'search.value' ) )) {
+			/* WHERE Clause for searching */
+			for($i = 0; $i < count ( $columns ); $i ++) {
+				if ($columns [$i] ['searchable'] === 'true') {
+					$column = $columns [$i] ['data']; // we get the name of each column using its index from POST request
+					$where [] = "$column like '%" . $this->request->input ( 'search.value' ) . "%'";
+				}
+			}
+			$where = "WHERE (" . implode ( " OR ", $where ) . ') AND topic_id = ' . $topicId; // id like '%searchValue%' or name like '%searchValue%' ....
+			if ($articleType === 'books' or $articleType === 'videos' or $articleType === 'interviews' or $articleType === 'latest') {
+				$where .= ' AND type_title = "' . $articleType . '"';
+			}
+			/* End WHERE */
+			$sql = sprintf ( 'SELECT * FROM ' . env ( 'DB_PREFIX' ) . 'articles %s', $where ); // Search query without limit clause (No pagination)
+			
+			$recordsFiltered = count ( DB::select ( DB::raw ( $sql ) ) ); // Count of search result
+			
+			/* SQL Query for search with limit and orderBy clauses */
+			$sql = sprintf ( 'SELECT id,topic_id, title, type_title, source_url, latest_order, top10_order, created_at FROM ' . env ( 'DB_PREFIX' ) . 'articles %s ORDER BY %s %s limit %d , %d ', $where, $orderBy, $orderType, $offset, $limit );
+			$articles = DB::select ( DB::raw ( $sql ) );
+		}  /* END SEARCH */
+else {
+			$recordsFiltered = $recordsTotal;
+			$where = [ 
+					'topic_id' => $topicId 
+			];
+			if ($articleType === 'books' or $articleType === 'videos' or $articleType === 'interviews' or $articleType === 'latest') {
+				$where ['type_title'] = $articleType;
+			}
+			$articles = Article::select ( 'id', 'topic_id', 'title', 'type_title', 'source_url', 'latest_order', 'top10_order', 'created_at' )->where ( $where )->orderBy ( $orderBy, $orderType )->offset ( $offset )->limit ( $limit )->get ();
+		}
+		$data = [ ];
+		foreach ( $articles as $article ) {
+			$deleteBtn = '<form action="/admin/articles/' . $article->id . '" method="POST" style="display: inline">
+								<input type="hidden" name="_method" value="DELETE"> <input type="hidden" name="_token" value="' . csrf_token () . '">
+								<button type="submit" class="btn btn-icon icon-bin" style="background-color:transparent">
+								</button>
+							</form>';
+			$data [] = [ 
+					'id' => $article->id,
+					'topic_id' => $article->topic_id,
+					'title' => str_limit ( $article->title, 30 ),
+					'sequence' => $article->{$orderBy},
+					'created_at' => date ( 'M j, Y', strtotime ( $article->created_at ) ),
+					'action' => "<span class='text-center'> <a href='/admin/articles/" . $article->id . "/edit' style='color:inherit'><i class='icon-pencil3'></i></a> " . $deleteBtn . '</span>' 
+			];
+		}
+		
+		/* Response to client before JSON encoding */
+		$response = array (
+				"draw" => intval ( $draw ),
+				"recordsTotal" => $recordsTotal,
+				"recordsFiltered" => $recordsFiltered,
+				"data" => $data 
+		);
+		return response ()->json ( $response );
 	}
 }

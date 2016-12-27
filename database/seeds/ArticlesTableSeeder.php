@@ -1,7 +1,8 @@
 <?php
 use PMU\Models\ {
 	Article, 
-	User
+	User, 
+	Topic
 };
 use PMU\Traits\Sluggable;
 use Illuminate\Database\ {
@@ -28,10 +29,12 @@ class ArticlesTableSeeder extends Seeder {
 			foreach ( $results as $row ) {
 				try {
 					$content = new Article ();
+					$topic = Topic::find ( $row->topic_id );
 					$title = $row->title ?? getTitleViaLink ( $row->url );
 					$author = User::findOrFail ( $row->author_id );
 					Article::create ( [ 
 							'topic_id' => $row->topic_id,
+							'topic_title' => $topic->title,
 							'type_title' => $row->type,
 							'source_url' => $row->url,
 							'title' => str_limit ( $title, 65 ),

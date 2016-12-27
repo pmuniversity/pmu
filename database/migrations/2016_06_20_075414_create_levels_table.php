@@ -11,9 +11,10 @@ class CreateLevelsTable extends Migration {
 		Schema::create ( 'levels', function (Blueprint $table) {
 			$table->mediumIncrements ( 'id' );
 			$table->string ( 'title', 40 );
+			$table->mediumText ( 'description' )->nullable ();
 			
 			// Slug
-			$table->string ( 'slug', 20 )->nullable();
+			$table->string ( 'slug', 20 )->nullable ();
 			
 			// Timestamps
 			$table->timestamp ( 'created_at' )->default ( DB::raw ( 'CURRENT_TIMESTAMP' ) );

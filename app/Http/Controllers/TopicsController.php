@@ -1,6 +1,6 @@
 <?php
 
-namespace PMU\Http\Controllers\Api;
+namespace PMU\Http\Controllers;
 
 use Illuminate\Http\Request;
 use PMU\Repositories\ {
@@ -11,7 +11,6 @@ use PMU\Traits\ApiControllerTrait;
 use PMU\Http\Controllers\Controller;
 use Cache;
 use PMU\Models\ {
-	Level, 
 	Article
 };
 use Illuminate\Database\ {
@@ -56,21 +55,19 @@ class TopicsController extends Controller {
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index($levelSlug) {
+	public function index() {
 		try {
-			$level = Level::whereSlug ( $levelSlug )->first ();
-			$levelId = $level->id;
-			$topics = Cache::remember ( $level->slug . '_topics', env ( 'CACHE_DEFAULT_EXPIRE_TIME' ), function () use ($levelId) {
-				return $this->topicGestion->indexByLevel ( $levelId );
-			} );
-			foreach ( $topics as $topic ) {
-				$topic->slug =  $topic->slug;
-				$topic->picture = $topic->picture ? url ( 'images/web/icons/' . $topic->picture ) : '';
-			}
+			$bachelorTopics = $this->topicGestion->indexByLevel ( 1 );
+			
+			$masterTopics = $this->topicGestion->indexByLevel ( 2 );
+			
+			$specializationTopics = $this->topicGestion->indexByLevel ( 3 );
 			$data = [ 
-					'topics' => $topics 
+					'bachelorTopics' => $bachelorTopics,
+					'masterTopics' => $masterTopics,
+					'specializationTopics' => $specializationTopics 
 			];
-			return $this->respondWithSuccess ( 'success', $data );
+			return view ( 'welcome', $data );
 		} catch ( ModelNotFoundException $e ) {
 			return $this->respondNotFound ( trans ( 'Requested resource not found' ) );
 		} catch ( QueryException $e ) {
@@ -82,7 +79,7 @@ class TopicsController extends Controller {
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show( $slug) {
+	public function show($slug) {
 		$topic = $this->topicGestion->show ( $slug );
 		$articles = $this->articleGestion->index ( 15, $topic->id, 'latest' );
 		$data = [ ];
@@ -126,8 +123,8 @@ class TopicsController extends Controller {
 		$article = $this->articleGestion->getById ( $articleId );
 		$upvoteCnt = $article->upvotes_count + 1;
 		Article::find ( $articleId )->increment ( 'upvotes_count' );
-		return $this->respondWithSuccess( 'success', [
-				'count' => $upvoteCnt
+		return $this->respondWithSuccess ( 'success', [ 
+				'count' => $upvoteCnt 
 		] );
 	}
 }

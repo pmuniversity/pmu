@@ -27,13 +27,7 @@
 					<a class="navbar-brand" href="/" title=""><img width="40"
 						height="20" src="{{ asset('images/web/logo.png') }}"
 						alt="Product Manager University"></a>
-				</div>
-				<div class="col-md-4">
-					<div class="arrow">
-						<i class="material-icons">&#xE315;</i>
-					</div>
-					<div class="article-title">{{ $topic->levelTitle }}</div>
-				</div>
+				</div>		
 
 				<div class="navbar-collapse collapse">
 					<ul class="navbar-nav  navbar-right">
@@ -78,9 +72,6 @@
 					<span style="display: none;">{{ $topic->id }} </span>
 					<h2>{{ $topic->title }}</h2>
 					<p>{!! $topic->description !!}</p>
-				</div>
-				<div class="text-center">
-					<a class="read-more" href="#">Read more</a>
 				</div>
 			</div>
 		</section>

@@ -3,6 +3,7 @@
 namespace PMU\Repositories;
 
 use PMU\Models\Article;
+use Storage;
 
 class ArticleRepository extends BaseRepository {
 	
@@ -37,6 +38,36 @@ class ArticleRepository extends BaseRepository {
 		}
 		return $query->where ( 'type_title', $type )->orderBy ( $orderBy, $sort );
 	}
+	private function queryActiveOrderByLatest($topicId, $type, $orderBy = 'latest_order', $sort = 'desc') {
+		$query = $this->model->select ( 'id', 'created_at as postedOn', 'updated_at', 'title', 'source_url as sourceUrl', 'author_id as authorId', 'description', 'sequence', 'file_path', 'video_url as videoUrl', 'type_title as articleType', 'author_name as authorName', 'author_location as authorLocation', 'author_organization as authorOffice', 'author_designation as authorDesignation', 'upvotes_count as upvoteCount' )->where ( 'topic_id', $topicId );
+		
+		return $query->orderBy ( $orderBy, $sort );
+	}
+	private function queryActiveOrderByTop($topicId, $type, $orderBy = 'sequence', $sort = 'desc') {
+		$query = $this->model->select ( 'id', 'created_at as postedOn', 'updated_at', 'title', 'source_url as sourceUrl', 'author_id as authorId', 'description', 'sequence', 'file_path', 'video_url as videoUrl', 'type_title as articleType', 'author_name as authorName', 'author_location as authorLocation', 'author_organization as authorOffice', 'author_designation as authorDesignation', 'upvotes_count as upvoteCount' )->where ( 'topic_id', $topicId );
+		
+		return $query->orderBy ( $orderBy, $sort );
+	}
+	
+	/**
+	 * Get post collection.
+	 *
+	 * @param int $n        	
+	 * @param int $id        	
+	 *
+	 * @return Illuminate\Support\Collection
+	 */
+	public function indexBytype($n, $topicId, $type = 'top-ten') {
+		if ($type === 'top-10') {
+			$query = $this->queryActiveOrderByTop ( $topicId, $type, 'sequence' );
+		} elseif ($type === 'latest') {
+			$query = $this->queryActiveOrderByLatest ( $topicId, $type );
+		} else {
+			$query = $this->queryActiveOrderByDate ( $topicId, $type );
+		}
+		
+		return $query->paginate ( $n );
+	}
 	
 	/**
 	 * Get post collection.
@@ -67,7 +98,7 @@ class ArticleRepository extends BaseRepository {
 				$article->videoSrc = 'https://www.youtube.com/embed/' . getYoutubeVideoId ( $article->videoUrl ) . '?rel=0&amp;controls=0&amp;showinfo=0';
 			}
 		}
-		$article->file_path && $article->articleType !== 'videos' ? url ( '/images/web/articles/' . $article->file_path ) : '';
+		$article->file_path = $article->file_path && $article->articleType !== 'videos' ? Storage::url ( $article->file_path ) : '';
 		return $article;
 	}
 	/**

@@ -338,6 +338,107 @@ $(function() {
 							}
 						}
 					});
+	var table = $('.dtable-btn-html5-article-by-type')
+			.DataTable(
+					{
+						buttons : {
+							buttons : [
+									{
+										extend : 'copyHtml5',
+										className : 'btn btn-default',
+										exportOptions : {
+											columns : [ 0, ':visible' ]
+										}
+									},
+									{
+										extend : 'excelHtml5',
+										className : 'btn btn-default',
+										exportOptions : {
+											columns : ':visible'
+										}
+									},
+									{
+										extend : 'csvHtml5',
+										className : 'btn btn-default',
+										exportOptions : {
+											columns : ':visible'
+										}
+									},
+									{
+										extend : 'pdfHtml5',
+										className : 'btn btn-default',
+										exportOptions : {
+											columns : ':visible'
+										}
+									},
+									{
+										extend : 'colvis',
+										text : '<i class="icon-three-bars"></i> <span class="caret"></span>',
+										className : 'btn bg-blue btn-icon'
+									} ]
+						},
+						"columns" : [ {
+							"data" : "id"
+						}, {
+							"data" : "topic_id"
+						}, {
+							"data" : "title"
+						}, {
+							"data" : "sequence"
+						}, {
+							"data" : "created_at"
+						}, {
+							"data" : "action"
+						} ],
+						"rowReorder" : {
+							"selector" : "tr"
+						},
+						"processing" : true,
+						"serverSide" : true,
+						"language" : {
+							"processing" : "Hang on. Waiting for response..."
+						},
+
+						"columnDefs" : [ {
+							"targets" : [ 5 ],
+							"orderable" : false,
+							"searchable" : false
+
+						}, {
+							"targets" : [ 3 ],
+							"searchable" : false
+
+						}, {
+							targets : 0,
+							visible : false
+						} ],
+						"ajax" : {
+							url : '/admin/dtable-articles-by-type',
+							type : 'POST',
+							data : {
+								topicId : $("#topicId").html(),
+								articleType : $("#articleType").html(),
+
+							}
+						}
+					});
+	table.on('row-reorder', function(e, diff, edit) {
+		console.log(edit);
+		var result = 'Reorder started on row: ' + edit.triggerRow.data()[1]
+				+ '<br>';
+
+		for (var i = 0, ien = diff.length; i < ien; i++) {
+			var rowData = table.row(diff[i].node).data();
+
+			result += rowData[1] + ' updated to be in position '
+					+ diff[i].newData + ' (was ' + diff[i].oldData + ')<br>';
+		}
+
+		$('#event-result').html('Event result:<br>' + result);
+		+'<br>';
+
+		// console.log(result);
+	});
 
 	// Tab separated values
 	$('.datatable-button-html5-tab')

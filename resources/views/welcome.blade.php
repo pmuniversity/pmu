@@ -38,13 +38,9 @@
 					<span>Product Manager University</span>
 				</h1>
 				<p>
-					<span>A free, game-changing online university for technology
-						product managers - all accessible in the cloud! Learn all aspects
-						of Product Management from some of the leading product managers of
-						Silicon Valley!<br /> Attain a Bachelor's and/or Master's degree
-						in Product Management that can land you your dream job or help you
-						hone your skills as an innovative Product Manager!
-					</span>
+					<span>A free, game-changing online university for product managers!
+						Learn all aspects of Product Management from some of the leading
+						product managers of Silicon Valley. </span>
 				</p>
 			</div>
 
@@ -52,15 +48,77 @@
 		<!--//Banner-->
 
 		<!--BACHELOUR'S DEGREE-->
-		<bachelore-topics></bachelore-topics>
+		<section class="common-section">
+			<div class="container">
+				<h2>BACHELOR'S DEGREE</h2>
+				<p>Learn the basics of Product Management. Topics range from how to
+					be a product manager, working with teams as a PM to creating
+					product roadmaps that lead to truly amazing products!</p>
+				<ul class="pm-list">
+					@foreach ($bachelorTopics as $index => $topic)
+					<li><a href="{{ $topic->slug }}">
+							<div class="media">
+								<div class="media-left">
+									<span class="pm-list-count">{{ $index += 1 }}.</span>
+								</div>
+								<div class="media-body">{{ $topic->title }}</div>
+								<div class="media-right">
+									<span class="r-more">READ</span>
+								</div>
+							</div>
+					</a></li> @endforeach
+				</ul>
+			</div>
+		</section>
 		<!--//BACHELOUR'S DEGREE-->
 
 		<!--MASTER'S DEGREE-->
-		<master-topics></master-topics>
+		<section class="common-section">
+			<div class="container">
+				<h2>MASTER'S DEGREE</h2>
+				<p>Already a Product Manager or think you've got the skills to go
+					after a Master's Degree in Product Management? Learn advanced
+					topics in product management.</p>
+				<ul class="pm-list">
+					@foreach ($masterTopics as $index => $topic)
+					<li><a href="{{ $topic->slug }}">
+							<div class="media">
+								<div class="media-left">
+									<span class="pm-list-count">{{ $index += 1 }}.</span>
+								</div>
+								<div class="media-body">
+									{{ $topic->title }} @if($index === 1) <span class="mark-read">Mark
+										as Read</span> @endif
+								</div>
+								<div class="media-right">
+									<span class="r-more">READ</span>
+								</div>
+							</div>
+					</a></li> @endforeach
+				</ul>
+			</div>
+		</section>
 		<!--//MASTER'S DEGREE-->
 
 		<!--SPECIALIZATION-->
-		<specialization-topics></specialization-topics>
+		<section class="common-section">
+			<div class="container">
+				<h2>SPECIALIZATION</h2>
+				<p>Dig deeper into the discipline of product management and dive
+					into twenty advanced product management courses that truly put your
+					skills to the test!</p>
+				<ul class="specialisation-list">
+					@foreach ($specializationTopics as $index => $topic)
+					<li><a href="{{ $topic->slug }}">
+							<div>
+								<img src="{{ Storage::url($topic->picture) }}"
+									alt="{{ $topic->title }}" class="s-list-icon" />
+							</div>
+							<div class="s-list-name">{{ $topic->title }}</div>
+					</a></li> @endforeach
+				</ul>
+			</div>
+		</section>
 		<!--//SPECIALIZATION-->
 
 		<!--HALLS OF KNOWLEDGE-->
@@ -183,9 +241,9 @@
 							v-on:submit.prevent="submitForm">
 							{!! csrf_field() !!} <input type="text" name="email" id="email"
 								class="email-input" placeholder="Send us an email"
-								v-model="formInputs.email" /> <input type="submit"
-								name="submit" class="submit-button" value="Send" :disabled="disabledButton" /> <span
-								class="required-field">Required</span>
+								v-model="formInputs.email" /> <input type="submit" name="submit"
+								class="submit-button" value="Send" :disabled="disabledButton" />
+							<span class="required-field">Required</span>
 						</form>
 						<div v-if="successMessage" class="success-message">@{{
 							successMessage }}</div>

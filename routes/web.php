@@ -10,10 +10,8 @@
  * | to using a Closure or controller method. Build something great!
  * |
  */
-Route::get ( '/', function () {
-	return view ( 'welcome' );
-} );
-Route::get ( '/topics/{level}/{slug}', 'Api\TopicsController@show' );
+Route::get ( '/', 'TopicsController@index' );
+
 Route::get ( 'confirm/{token}', 'Auth\RegisterController@confirm' );
 
 Auth::routes ();
@@ -43,6 +41,11 @@ Route::group ( [
 	// Article Route
 	Route::resource ( 'articles', 'ArticleController' );
 	Route::post ( '/datatable-articles', 'ArticleController@ajaxIndex' );
+	Route::post ( '/dtable-articles-by-type', 'ArticleController@ajaxIndexByType' );
 	// List topics based on Product types
 	Route::get ( 'topics/level/{type}', 'TopicsController@indexByLevel' );
+	Route::get ( 'artcles-by-type/{type}/{topicId}', 'ArticleController@indexByType' );
 } );
+
+// Topic details page
+Route::get ( '/{slug}', 'Api\TopicsController@show' );

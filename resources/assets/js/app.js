@@ -70,7 +70,7 @@ Vue.component('tab', {
 										<li><span class="dot"></span></li>
 										<li>{{ article.authorLocation }}</li>
 									</ul>
-									<div v-if="article.image" class="image-box"><img :src="article.image" /></div>
+									<div v-if="article.file_path" class="image-box"><img :src="article.file_path" /></div>
                         				<p v-if="article.description">{{ article.description }}...</p>
 									<div class="article-footer">
 										<a :href="article.sourceUrl" target="_blank" class="read">Read</a>

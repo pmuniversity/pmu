@@ -25,3 +25,4 @@
 * Create virtual host for the project something like http://pmu.dev/ (optional)
 * You can access the browser by typing the virtual host OR type the project path in browser something like ‘http://localhost/projectname/public/’
 * Create folder in public/uploads and should give write permissions
+* type `php artisan storage:link` to create the symbolic link

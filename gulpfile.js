@@ -14,7 +14,7 @@ require('laravel-elixir-vue-2');
 elixir(mix => {
     mix.styles(['app.css'])
        .webpack('app.js')
-    .copy('resources/assets/images', 'public/images')
+    //.copy('resources/assets/images', 'public/images')
     .copy('resources/assets/fonts', 'public/fonts');
     mix.version(['css/all.css', 'js/app.js'], 'public');
     

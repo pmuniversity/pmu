@@ -34,7 +34,9 @@
 <script type="text/javascript"
 	src="/assets/admin/js/plugins/tables/datatables/datatables.min.js"></script>
 <script src="/templateEditor/ckeditor/ckeditor.js"></script>
-<script type="text/javascript" src="/assets/admin/js/plugins/uploaders/fileinput.min.js"></script>
+<script type="text/javascript"
+	src="/assets/admin/js/plugins/uploaders/fileinput.min.js"></script>
+	<script type="text/javascript" src="/assets/admin/js/plugins/tables/datatables/extensions/row_reorder.min.js"></script>
 <script type="text/javascript"
 	src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 <script type="text/javascript"
@@ -51,7 +53,10 @@
 	src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.colVis.min.js"></script>
 
 <script type="text/javascript" src="/assets/admin/js/core/app.js"></script>
-<script type="text/javascript" src="/assets/admin/js/pages/uploader_bootstrap.js"></script>
+<script type="text/javascript"
+	src="/assets/admin/js/pages/uploader_bootstrap.js"></script>
 <script type="text/javascript"
 	src="/assets/admin/js/pages/datatables_extension_buttons_html5.js"></script>
+<script type="text/javascript"
+	src="/assets/admin/js/pages/datatables_extension_row_reorder.js"></script>
 <!-- /theme JS files -->

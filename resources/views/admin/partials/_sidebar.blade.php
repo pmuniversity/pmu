@@ -41,7 +41,7 @@
 					<li><a href="/admin/users"><i class="icon-home4"></i> <span>Users</span></a></li>
 					<li><a href="#"><i class="icon-people"></i> <span>Product Types</span></a>
 						<ul>
-							<li><a href="/admin/topics/level/bachelores-degree">Bachelore</a></li>
+							<li><a href="/admin/topics/level/bachelors-degree">Bachelore</a></li>
 							<li><a href="/admin/topics/level/masters-degree">Master</a></li>
 							<li><a href="/admin/topics/level/specialization">Specialization</a></li>
 						</ul></li>

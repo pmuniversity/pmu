@@ -34,6 +34,7 @@
 									<label class="control-label col-lg-2">Article type</label>
 									<div class="col-lg-10">
 										<select name="type_title" class="form-control">
+											<option value="latest" @if(old('type_title') === 'latest') selected @endif>Latest</option>
 											<option value="top-10" @if(old('type_title') === 'top-10') selected @endif>Top 10</option>
 											<option value="books" @if(old('type_title') === 'books') selected @endif>Books</option>
 											<option value="videos" @if(old('type_title') === 'videos') selected @endif>Videos</option>

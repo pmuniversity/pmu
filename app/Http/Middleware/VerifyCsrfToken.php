@@ -15,6 +15,7 @@ class VerifyCsrfToken extends BaseVerifier {
 			'/admin/datatable-topics',
 			'/admin/datatable-topics-by-level',
 			'/admin/datatable-articles',
+			'/admin/dtable-articles-by-type',
 			'/image',
 			'/api/password/email' 
 	];
