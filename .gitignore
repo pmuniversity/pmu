@@ -11,13 +11,11 @@ nbproject/
 .settings/
 
 # Local storage
-storage/docs/api-docs.json
-public/vendor/
-public/uploads/
 public/storage/
 storage/logs/
 public/templateEditor/kcfinder/*
 public/js/*
+public/js/app.js
 public/css/*
 public/rev-manifest.json
 public/images/**
