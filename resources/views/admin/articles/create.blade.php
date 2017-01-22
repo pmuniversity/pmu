@@ -39,7 +39,7 @@
 											<option value="books" @if(old('type_title') === 'books') selected @endif>Books</option>
 											<option value="videos" @if(old('type_title') === 'videos') selected @endif>Videos</option>
 											<option value="interviews" @if(old('type_title') === 'interviews') selected @endif>Intervies</option>
-											<option value="notes" @if(old('type_title') === 'notes') selected @endif>Notes</option>
+											<option value="tools" @if(old('type_title') === 'tools') selected @endif>Tools</option>
 										</select>
 									</div>
 								</div>
@@ -72,7 +72,7 @@
 									<label class="col-lg-2 control-label text-semibold">File
 										upload:</label>
 									<div class="col-lg-10">
-										<input type="file" class="file-input" name="file_path">
+										<input type="file" class="file-input" name="file">
 									</div>
 								</div>
 								<div class="form-group">

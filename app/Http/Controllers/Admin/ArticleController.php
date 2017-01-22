@@ -2,17 +2,18 @@
 
 namespace PMU\Http\Controllers\Admin;
 
-use PMU\Http\Controllers\Controller;
-use PMU\Http\Requests\ArticleRequest;
+use DB;
+use Auth;
 use PMU\Models\ {
+	Topic, 
 	Article
 };
-use PMU\Repositories\ArticleRepository;
-use Auth, DB;
-use Image;
 use Illuminate\Http\Request;
 use PMU\Traits\FileUploadTrait;
-use PMU\Models\Topic;
+use PMU\Http\Controllers\Controller;
+use PMU\Http\Requests\ArticleRequest;
+use PMU\Repositories\ArticleRepository;
+use PMU\Services\FileManager\UploadManager;
 
 class ArticleController extends Controller {
 	use FileUploadTrait;
@@ -108,7 +109,7 @@ else {
 					'title' => str_limit ( $article->title, 30 ),
 					'type_title' => ucfirst ( $article->type_title ),
 					'created_at' => date ( 'M j, Y', strtotime ( $article->created_at ) ),
-					'action' => "<span class='text-center'> <a href='/admin/articles/" . $article->id . "/edit' style='color:inherit'><i class='icon-pencil3'></i></a> " . $deleteBtn . '</span>' 
+					'action' => "<span class='text-center'> <a href='/admin/articles/" . $article->id . "/edit?topicId=" . $topicId . "' style='color:inherit'><i class='icon-pencil3'></i></a> " . $deleteBtn . '</span>' 
 			];
 		}
 		
@@ -127,17 +128,14 @@ else {
 				'topicId' => $this->request->input ( 'topicId' ) 
 		] );
 	}
-	public function store(ArticleRequest $request) {
+	public function store(ArticleRequest $request, UploadManager $manager) {
 		$topicId = $this->request->input ( 'topic_id' );
 		$redirectUrl = 'admin/articles/create?topicId=' . $topicId;
 		$message = trans ( 'errors.something_went_wrong' );
 		$errorLevel = 'danger';
 		try {
-			if ($request->hasFile ( 'file_path' )) {
-				$file = $request->file ( 'file_path' );
-				$fileName = generateFileName ( $file->getClientOriginalExtension () );
-				$webFilePath = $file->storeAs ( 'public/images/articles/mobile', $fileName );
-				$filePath = $file->storeAs ( 'public/images/articles/web', $fileName );
+			if ($request->hasFile ( 'file' )) {
+				$filePath = $this->uploadFile ( $request, $manager );
 			}
 			$inputs = array_merge ( $request->all (), [ 
 					'file_path' => $filePath ?? null
@@ -267,7 +265,7 @@ else {
 					'title' => str_limit ( $article->title, 30 ),
 					'sequence' => $article->{$orderBy},
 					'created_at' => date ( 'M j, Y', strtotime ( $article->created_at ) ),
-					'action' => "<span class='text-center'> <a href='/admin/articles/" . $article->id . "/edit' style='color:inherit'><i class='icon-pencil3'></i></a> " . $deleteBtn . '</span>' 
+					'action' => "<span class='text-center'> <a href='/admin/articles/" . $article->id . "/edit?topicId='. $topicId.' style='color:inherit'><i class='icon-pencil3'></i></a> " . $deleteBtn . '</span>' 
 			];
 		}
 		
@@ -279,5 +277,72 @@ else {
 				"data" => $data 
 		);
 		return response ()->json ( $response );
+	}
+	public function edit($id) {
+		$article = Article::findOrFail ( $id );
+		
+		return view ( 'admin.articles.edit', [ 
+				'pageTitle' => 'Update article',
+				'article' => $article,
+				'topicId' => $this->request->input ( 'topicId' ) 
+		] );
+	}
+	public function update($id, ArticleRequest $request, UploadManager $manager) {
+		$topicId = $request->input ( 'topic_id' );
+		$redirectUrl = 'admin/articles/' . $id . '/edit';
+		$message = trans ( 'errors.something_went_wrong' );
+		$errorLevel = 'danger';
+		try {
+			
+			$article = Article::findOrFail ( $id );
+			
+			if ($request->hasFile ( 'file_path' )) {
+				$filePath = $this->uploadFile ( $request, $manager );
+			}
+			$inputs = array_merge ( $request->all (), [ 
+					'file_path' => $filePath ?? null
+			] );
+			
+			$article = $this->articleGestion->saveArticle ( $article, $inputs, Auth::user ()->id );
+			
+			flash ()->overlay ( trans ( 'messages.article_updated_success' ), trans ( 'messages.success' ) )->important ();
+			
+			return redirect ( 'admin/articles?topicId=' . $topicId );
+		} catch ( QueryException $e ) {
+			$message .= ' ' . $e->getMessage ();
+		} catch ( \ErrorException $e ) {
+			$message .= ' ' . $e->getMessage ();
+		}
+		flash ( $message, $errorLevel )->important ();
+		return redirect ( $redirectUrl )->withInput ();
+	}
+	/**
+	 * Upload the file.
+	 *
+	 * @param
+	 *        	$request
+	 * @return string
+	 */
+	public function uploadFile($request, $manager) {
+		$file = $_FILES ['file'];
+		
+		$fileName = $request->get ( 'name' );
+		$fileExtension = explode ( '/', $file ['type'] ) [1];
+		
+		$fileName = $fileName ? $fileName . '.' . explode ( '/', $file ['type'] ) [1] : generateFileName ( $fileExtension );
+		
+		$path = str_finish ( 'public/images/articles/web', '/' ) . $fileName;
+		$mobilePath = str_finish ( 'public/images/articles/mobile', '/' ) . $fileName;
+		
+		$content = \File::get ( $file ['tmp_name'] );
+		
+		if ($manager->checkFile ( $path ) or $manager->checkFile ( $mobilePath )) {
+			return 'This File exists.';
+			// return $this->errorWrongArgs ( 'This File exists.' );
+		}
+		
+		$manager->saveFile ( $path, $content );
+		$manager->saveFile ( $mobilePath, $content );
+		return $path;
 	}
 }

@@ -125,11 +125,13 @@ class ArticleRepository extends BaseRepository {
 	 */
 	public function saveArticle($article, $inputs, $userId = null) {
 		$article->topic_id = ( int ) $inputs ['topic_id'];
-                 $article->source_url = $inputs['source_url'] ?? null;
+		$article->source_url = $inputs ['source_url'] ?? null;
 		$article->type_title = $inputs ['type_title'];
 		$article->title = ucwords ( strtolower ( $inputs ['title'] ) );
 		$article->description = ucwords ( $inputs ['description'] );
-		$article->file_path = $inputs ['file_path'] ?? null;
+		if (isset ( $inputs ['file_path'] )) {
+			$article->file_path = $inputs ['file_path'] ?? null;
+		}
 		$article->video_url = $inputs ['video_url'] ?? null;
 		$article->author_name = isset ( $inputs ['author_name'] ) ? ucwords ( strtolower ( $inputs ['author_name'] ) ) : null;
 		$article->author_location = isset ( $inputs ['author_location'] ) ? ucwords ( strtolower ( $inputs ['author_location'] ) ) : null;

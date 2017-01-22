@@ -17,6 +17,7 @@ use PMU\Traits\ {
 use PMU\Http\Controllers\Controller;
 use DB, Auth;
 use PMU\Http\Requests\TopicRequest;
+use PMU\Services\FileManager\UploadManager;
 
 class TopicsController extends Controller {
 	use ApiControllerTrait, FileUploadTrait;
@@ -239,18 +240,14 @@ else {
 				'pageTitle' => 'Add a topic' 
 		] );
 	}
-	public function store(TopicRequest $request) {
+	public function store(TopicRequest $request, UploadManager $manager) {
 		$redirectUrl = 'admin/topics/create';
 		$message = trans ( 'errors.something_went_wrong' );
 		$errorLevel = 'danger';
 		try {
 			$level = Level::findOrFail ( $request->input ( 'level_id' ) );
-			$picture = '';
-			if ($request->hasFile ( 'picture' )) {
-				$file = $request->file ( 'picture' );
-				$fileName = generateFileName ( $file->getClientOriginalExtension () );
-				$webFilePath = $file->storeAs ( 'public/images/topics/mobile', $fileName );
-				$filePath = $file->storeAs ( 'public/images/topics/web', $fileName );
+			if ($request->hasFile ( 'file' )) {
+				$filePath = $this->uploadFile ( $request, $manager );
 			}
 			$active = false;
 			if ($request->has ( 'active' )) {
@@ -283,19 +280,23 @@ else {
 				'topic' => $topic 
 		] );
 	}
-	public function update($id, TopicRequest $request) {
+	public function update($id, TopicRequest $request, UploadManager $manager) {
 		$redirectUrl = 'admin/topics/' . $id . '/edit';
 		$message = trans ( 'errors.something_went_wrong' );
 		$errorLevel = 'danger';
 		try {
 			$level = Level::findOrFail ( $request->input ( 'level_id' ) );
 			$topic = Topic::findOrFail ( $id );
+			if ($request->hasFile ( 'file' )) {
+				$filePath = $this->uploadFile ( $request, $manager );
+			}
 			$active = false;
 			if ($request->has ( 'active' )) {
 				$active = true;
 			}
 			$inputs = array_merge ( $request->all (), [ 
 					'level_title' => $level->title,
+					'picture' => $filePath ?? null,
 					'active' => $active 
 			] );
 			$topic = $this->topicRepo->saveTopic ( $topic, $inputs, Auth::user ()->id );
@@ -308,7 +309,6 @@ else {
 		} catch ( \ErrorException $e ) {
 			$message .= ' ' . $e->getMessage ();
 		}
-		dd ( $message );
 		flash ( $message, $errorLevel )->important ();
 		return redirect ( $redirectUrl )->withInput ();
 	}
@@ -334,5 +334,34 @@ else {
 		}
 		flash ()->overlay ( $message, 'Danger' )->important ();
 		return redirect ( 'admin/topics' );
+	}
+	/**
+	 * Upload the file.
+	 *
+	 * @param
+	 *        	$request
+	 * @return string
+	 */
+	public function uploadFile($request, $manager) {
+		$file = $_FILES ['file'];
+		
+		$fileName = $request->get ( 'name' );
+		$fileExtension = explode ( '/', $file ['type'] ) [1];
+		
+		$fileName = $fileName ? $fileName . '.' . explode ( '/', $file ['type'] ) [1] : generateFileName ( $fileExtension );
+		
+		$path = str_finish ( 'public/images/topics/web', '/' ) . $fileName;
+		$mobilePath = str_finish ( 'public/images/topics/mobile', '/' ) . $fileName;
+		
+		$content = \File::get ( $file ['tmp_name'] );
+		
+		if ($manager->checkFile ( $path ) or $manager->checkFile ( $mobilePath )) {
+			return 'This File exists.';
+			// return $this->errorWrongArgs ( 'This File exists.' );
+		}
+		
+		$manager->saveFile ( $path, $content );
+		$manager->saveFile ( $mobilePath, $content );
+		return $path;
 	}
 }

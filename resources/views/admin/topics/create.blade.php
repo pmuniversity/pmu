@@ -57,6 +57,14 @@
 											</textarea>
 									</div>
 								</div>
+								<div class="form-group">
+									<label class="control-label col-lg-2">Note Title <span
+										class="text-danger">*</span></label>
+									<div class="col-lg-10">
+										<input type="text" class="form-control" name="note_title"
+											value="{{ old('note_title') }}" />
+									</div>
+								</div>
 
 								<div class="form-group">
 									<label class="control-label col-lg-2">Description <span
@@ -72,14 +80,15 @@
 									<label class="col-lg-2 control-label text-semibold">File
 										upload:</label>
 									<div class="col-lg-10">
-										<input type="file" class="file-input" name="picture">
+										<input type="file" class="file-input" name="file">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="control-label col-lg-2">Mark to publish <span
 										class="text-danger">*</span></label>
 									<div class="col-lg-1">
-										<input type="checkbox" class="form-control" name="active" @if(old('active')) checked @endif />
+										<input type="checkbox" class="form-control" name="active"
+											@if(old('active')) checked @endif />
 									</div>
 								</div>
 								<script>

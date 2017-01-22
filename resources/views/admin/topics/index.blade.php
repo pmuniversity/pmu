@@ -5,9 +5,12 @@
 		<h5 class="panel-title">{{ $pageTitle }}</h5>
 		<div class="heading-elements">
 			<ul class="icons-list">
+				<li><a href="/admin/topics/create" class="icon-plus3"
+					title="Add a topic"></a></li>
 				<li><a data-action="collapse"></a></li>
 				<li><a data-action="reload"></a></li>
 				<li><a data-action="close"></a></li>
+
 			</ul>
 		</div>
 	</div>

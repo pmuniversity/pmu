@@ -87,8 +87,7 @@
 									<span class="pm-list-count">{{ $index += 1 }}.</span>
 								</div>
 								<div class="media-body">
-									{{ $topic->title }} @if($index === 1) <span class="mark-read">Mark
-										as Read</span> @endif
+									{{ $topic->title }} @if($index === 1) @endif
 								</div>
 								<div class="media-right">
 									<span class="r-more">READ</span>

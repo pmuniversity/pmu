@@ -63,7 +63,16 @@
 								</div>
 
 								<div class="form-group">
-									<label class="control-label col-lg-2">Description <span
+									<label class="control-label col-lg-2">Note Title <span
+										class="text-danger">*</span></label>
+									<div class="col-lg-10">
+										<input type="text" class="form-control" name="note_title"
+											value="{{ $topic->note_title }}" />
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-lg-2">Note Description <span
 										class="text-danger">*</span></label>
 									<div class="col-lg-10">
 										<textarea name="description" id="editor1" rows="15" cols="80">

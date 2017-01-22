@@ -34,7 +34,7 @@ class TopicRepository extends BaseRepository {
 		return $this->model->where ( 'level_id', $levelId )->select ( 'id', 'title', 'summary', 'slug', 'level_title as levelTitle', 'picture' )->latest ()->get ();
 	}
 	public function show($slug) {
-		return $this->model->whereSlug ( $slug )->select ( 'id', 'title', 'summary', 'description', 'slug', 'level_title as levelTitle', 'picture' )->firstOrFail ();
+		return $this->model->whereSlug ( $slug )->select ( 'id', 'title', 'summary', 'note_title as noteTitle', 'description', 'slug', 'level_title as levelTitle', 'picture' )->firstOrFail ();
 	}
 	/**
 	 * Count the users for a role.
@@ -77,8 +77,11 @@ class TopicRepository extends BaseRepository {
 		$topic->level_title = $inputs ['level_title'];
 		$topic->title = ucwords ( strtolower ( trim ( $inputs ['title'] ) ) );
 		$topic->summary = ucwords ( trim ( $inputs ['summary'] ) );
+		$topic->note_title = ucwords ( strtolower ( trim ( $inputs ['note_title'] ) ) );
 		$topic->description = ucwords ( trim ( $inputs ['description'] ) );
-		$topic->picture = $inputs ['picture'] ?? null;
+		if (isset ( $inputs ['picture'] )) {
+			$topic->picture = $inputs ['picture'] ?? null;
+		}
 		$topic->author_name = isset ( $inputs ['author_name'] ) ? ucwords ( strtolower ( $inputs ['author_name'] ) ) : null;
 		$topic->author_location = isset ( $inputs ['author_location'] ) ? ucwords ( strtolower ( $inputs ['author_location'] ) ) : null;
 		$topic->author_office = isset ( $inputs ['author_office'] ) ? ucwords ( strtolower ( $inputs ['author_office'] ) ) : null;

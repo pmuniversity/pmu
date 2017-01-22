@@ -27,11 +27,10 @@
 					<a class="navbar-brand" href="/" title=""><img width="40"
 						height="20" src="{{ asset('images/web/logo.png') }}"
 						alt="Product Manager University"></a>
-				</div>		
+				</div>
 
 				<div class="navbar-collapse collapse">
-					<ul class="navbar-nav  navbar-right">
-						@include('partials._top_nav')
+					<ul class="navbar-nav  navbar-right">@include('partials._top_nav')
 					</ul>
 				</div>
 			</div>
@@ -56,7 +55,7 @@
 		<tabs> <tab name="TOP 10" :selected="true"> </tab> <tab name="LATEST">
 
 		</tab> <tab name="VIDEOS"> </tab> <tab name="BOOKS"> </tab> <tab
-			name="INTERVIEWS"> </tab> <tab name="NOTES"> </tab> </tabs>
+			name="INTERVIEWS"> </tab> <tab name="TOOLS"> </tab> </tabs>
 
 
 		<!--//Category Tabs-->
@@ -70,7 +69,7 @@
 			<div class="container">
 				<div class="special-article" id="special-article">
 					<span style="display: none;">{{ $topic->id }} </span>
-					<h2>{{ $topic->title }}</h2>
+					<h2>{{ $topic->noteTitle }}</h2>
 					<p>{!! $topic->description !!}</p>
 				</div>
 			</div>
@@ -88,9 +87,9 @@
 							v-on:submit.prevent="submitForm">
 							{!! csrf_field() !!} <input type="text" name="email" id="email"
 								class="email-input" placeholder="Send us an email"
-								v-model="formInputs.email" /> <input type="submit"
-								name="submit" class="submit-button" value="Send" :disabled="disabledButton" /> <span
-								class="required-field">Required</span>
+								v-model="formInputs.email" /> <input type="submit" name="submit"
+								class="submit-button" value="Send" :disabled="disabledButton" />
+							<span class="required-field">Required</span>
 						</form>
 						<div v-if="successMessage" class="success-message">@{{
 							successMessage }}</div>

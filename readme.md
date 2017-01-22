@@ -7,7 +7,7 @@
 
 ### Installation ###
 
-* type `git clone https://github.com/pmuniversity/pmu.git projectname` to clone the repository
+* type `git clone https://github.com/raf-jana/pmu.git projectname` to clone the repository
 * type `cd projectname`
 * type `composer install`
 * type `composer update`
