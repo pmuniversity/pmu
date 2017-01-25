@@ -18,7 +18,6 @@ public/js/*
 public/js/app.js
 public/css/*
 public/rev-manifest.json
-public/images/**
 public/fonts/
 
 # Swagger API documentation
