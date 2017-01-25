@@ -14,7 +14,6 @@ nbproject/
 public/storage/
 storage/logs/
 public/templateEditor/kcfinder/*
-public/js/*
 public/js/app.js
 public/css/*
 public/rev-manifest.json
