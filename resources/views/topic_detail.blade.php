@@ -7,11 +7,17 @@
 	content="IE=11; IE=10; IE=9; IE=8; IE=EDGE">
 <meta charset="utf-8" />
 <title>PMU | {{ $topic->title }}</title>
+<link rel="shortcut icon" href="/images/web/favicon.ico">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
 	rel="stylesheet">
 <link rel="stylesheet" href="{{ elixir('css/all.css', null) }}">
 </head>
 <body>
+	<progress value="0" id="progressBar" class="flat">
+		<div class="progress-container">
+			<span class="progress-bar"></span>
+		</div>
+	</progress>
 	<div id="app">
 		<!--Header-->
 		<nav class="navbar navbar-default navbar-fixed-top">
@@ -24,9 +30,8 @@
 							class="icon-bar"></span> <span class="icon-bar"></span> <span
 							class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="/" title=""><img width="40"
-						height="20" src="{{ asset('images/web/logo.png') }}"
-						alt="Product Manager University"></a>
+					<a class="navbar-brand" href="/" title=""><img height="35"
+						src="/images/web/logo-inner.png" alt="{{ config('app.name') }}"></a>
 				</div>
 
 				<div class="navbar-collapse collapse">
@@ -75,6 +80,24 @@
 			</div>
 		</section>
 		<!--//Special Section-->
+		<!--Next Previous Section-->
+		<section class="next-previous-section">
+			<div class="container">
+				@if($nextTopic)
+				<div class="pull-left">
+					<a href="{{ url($nextTopic->slug)}}"><i class="material-icons">&#xE314;</i>
+						{{ $nextTopic->title }} </a>
+				</div>
+				@endif @if($previousTopic)
+				<div class="pull-right">
+					<a href="{{ url($previousTopic->slug)}}">{{ $previousTopic->title
+						}} <i class="material-icons">&#xE315;</i>
+					</a>
+				</div>
+				@endif
+			</div>
+		</section>
+		<!--//Next Previous Section-->
 
 		<!--Footer-->
 		<footer class="common-section" style="background-color: #333;">
@@ -122,9 +145,57 @@
 				?>
 </script>
 	<script src="{{ elixir('js/app.js', null) }}"></script>
+	<script src="/js/jquery-scrolltofixed-min.js"></script>
 	<script type="text/javascript">
-
 	$(document).ready(function() {
+		$('.inner-tabs').scrollToFixed({
+	        marginTop: $('.navbar-default').outerHeight(true),
+	        limit: $('.special-section').offset().top
+	    });
+		var getMax = function(){
+	        return $(document).height() - $(window).height();
+	    }
+	    
+	    var getValue = function(){
+	        return $(window).scrollTop();
+	    }
+	    
+	    if('max' in document.createElement('progress')){
+	        var progressBar = $('progress');
+			
+	        progressBar.attr({ max: getMax() });
+
+	        $(document).on('scroll', function(){
+	            progressBar.attr({ value: getValue() });
+	        });
+	      
+	        $(window).resize(function(){
+	            progressBar.attr({ max: getMax(), value: getValue() });
+	        });   
+	    }
+	    else {
+	        var progressBar = $('.progress-bar'), 
+	            max = getMax(), 
+	            value, width;
+	        
+	        var getWidth = function(){
+	            // Calculate width in percentage
+	            value = getValue();            
+	            width = (value/max) * 100;
+	            width = width + '%';
+	            return width;
+	        }
+	        
+	        var setWidth = function(){
+	            progressBar.css({ width: getWidth() });
+	        }
+	        
+	        $(document).on('scroll', setWidth);
+	        $(window).on('resize', function(){
+	            max = getMax();
+	            setWidth();
+	        });
+	    }
     
 	
 	/* error message element hide on focus */

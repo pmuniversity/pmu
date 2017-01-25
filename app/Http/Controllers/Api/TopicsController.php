@@ -12,7 +12,8 @@ use PMU\Http\Controllers\Controller;
 use Cache;
 use PMU\Models\ {
 	Level, 
-	Article
+	Article, 
+	Topic
 };
 use Illuminate\Database\ {
 	Eloquent\ModelNotFoundException, 
@@ -64,7 +65,7 @@ class TopicsController extends Controller {
 				return $this->topicGestion->indexByLevel ( $levelId );
 			} );
 			foreach ( $topics as $topic ) {
-				$topic->slug =  $topic->slug;
+				$topic->slug = $topic->slug;
 				$topic->picture = $topic->picture ? url ( 'images/web/icons/' . $topic->picture ) : '';
 			}
 			$data = [ 
@@ -82,13 +83,13 @@ class TopicsController extends Controller {
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show( $slug) {
+	public function show($slug) {
 		$topic = $this->topicGestion->show ( $slug );
 		$articles = $this->articleGestion->index ( 15, $topic->id, 'latest' );
-		$data = [ ];
-		$data ['topic'] = $topic;
-		$data ['articles'] = $articles;
-		return view ( 'topic_detail', $data );
+		$previousTopic = Topic::find ( $topic->nextRecord () );
+		$nextTopic = Topic::find ( $topic->previousRecord () );
+		
+		return view ( 'topic_detail', compact ( 'topic', 'articles', 'nextTopic', 'previousTopic' ) );
 	}
 	/**
 	 * Show the application dashboard.
@@ -126,8 +127,8 @@ class TopicsController extends Controller {
 		$article = $this->articleGestion->getById ( $articleId );
 		$upvoteCnt = $article->upvotes_count + 1;
 		Article::find ( $articleId )->increment ( 'upvotes_count' );
-		return $this->respondWithSuccess( 'success', [
-				'count' => $upvoteCnt
+		return $this->respondWithSuccess ( 'success', [ 
+				'count' => $upvoteCnt 
 		] );
 	}
 }

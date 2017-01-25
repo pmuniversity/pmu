@@ -296,7 +296,7 @@ else {
 			
 			$article = Article::findOrFail ( $id );
 			
-			if ($request->hasFile ( 'file_path' )) {
+			if ($request->hasFile ( 'file' )) {
 				$filePath = $this->uploadFile ( $request, $manager );
 			}
 			$inputs = array_merge ( $request->all (), [ 

@@ -7,12 +7,18 @@
 	content="IE=11; IE=10; IE=9; IE=8; IE=EDGE">
 <meta charset="utf-8" />
 <title>PMU | Product Manager University</title>
+<link rel="shortcut icon" href="/images/web/favicon.ico">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
 	rel="stylesheet">
 <link rel="stylesheet" href="{{ elixir('css/all.css', null) }}">
 
 </head>
 <body>
+	<progress value="0" id="progressBar" class="flat">
+		<div class="progress-container">
+			<span class="progress-bar"></span>
+		</div>
+	</progress>
 	<div id="app">
 		<!--Header-->
 		@if (!Auth::guest())
@@ -29,8 +35,7 @@
 		<!--Banner-->
 		<section class="main-banner">
 			<div class="banner-logo">
-
-				<img src="{{ asset('images/web/logo.png') }}" />
+				<img src="/images/web/logo.png" />
 			</div>
 
 			<div class="caption">
@@ -86,9 +91,8 @@
 								<div class="media-left">
 									<span class="pm-list-count">{{ $index += 1 }}.</span>
 								</div>
-								<div class="media-body">
-									{{ $topic->title }} @if($index === 1) @endif
-								</div>
+								<div class="media-body">{{ $topic->title }} @if($index === 1)
+									@endif</div>
 								<div class="media-right">
 									<span class="r-more">READ</span>
 								</div>
@@ -132,7 +136,7 @@
 						<div class="col-md-4">
 							<div class="k-list-item">
 								<div class="list-image">
-									<img src="{{ asset('images/web/knowledge-class.png') }}" />
+									<img src="{{ asset('images/web/pm-course.png') }}" />
 								</div>
 								<div class="list-desc">
 									<div class="list-desc-details">
@@ -144,11 +148,11 @@
 						<div class="col-md-4">
 							<div class="k-list-item">
 								<div class="list-image">
-									<img src="{{ asset('images/web/knowledge-class.png') }}" />
+									<img src="{{ asset('images/web/pm-blog.png') }}" />
 								</div>
 								<div class="list-desc">
 									<div class="list-desc-details">
-										<p>Product Manager Courses</p>
+										<p>Product Manager Blogs</p>
 									</div>
 								</div>
 							</div>
@@ -156,11 +160,11 @@
 						<div class="col-md-4">
 							<div class="k-list-item">
 								<div class="list-image">
-									<img src="{{ asset('images/web/knowledge-class.png') }}" />
+									<img src="{{ asset('images/web/pm-podcast.png') }}" />
 								</div>
 								<div class="list-desc">
 									<div class="list-desc-details">
-										<p>Product Manager Courses</p>
+										<p>Product Manager Podcasts</p>
 									</div>
 								</div>
 							</div>
@@ -184,7 +188,7 @@
 				<div class="placement-list">
 					<div class="media">
 						<div class="pull-left">
-							<img src="{{ asset('images/web/pm-interviews.png') }}" />
+							<img src="{{ asset('images/web/pm-jobs.png') }}" />
 						</div>
 						<div class="media-body">
 							<h4 class="p-list-header">Product Managment jobs</h4>
@@ -201,21 +205,7 @@
 							<img src="{{ asset('images/web/pm-interviews.png') }}" />
 						</div>
 						<div class="media-body">
-							<h4 class="p-list-header">Product Managment jobs</h4>
-							<div class="p-list-desc">Lorem ipsum dolor sit amet, consectetur
-								adipiscing elit. Morbi eleifend ornare lorem. Aliquam gravida et
-								elit sed vulputate.</div>
-							<div class="p-list-link">
-								<a href="#">Read more &raquo;</a>
-							</div>
-						</div>
-					</div>
-					<div class="media">
-						<div class="pull-left">
-							<img src="{{ asset('images/web/pm-interviews.png') }}" />
-						</div>
-						<div class="media-body">
-							<h4 class="p-list-header">Product Managment jobs</h4>
+							<h4 class="p-list-header">PRODUCT MANAGEMENT INTERVIEWS</h4>
 							<div class="p-list-desc">Lorem ipsum dolor sit amet, consectetur
 								adipiscing elit. Morbi eleifend ornare lorem. Aliquam gravida et
 								elit sed vulputate.</div>
@@ -275,17 +265,55 @@
 				?>
 </script>
 	<script src="{{ elixir('js/app.js', null) }}"></script>
+	<script src="/js/jquery-scrolltofixed-min.js"></script>
 	<script>
 	
 $(document).ready(function() {
-	msBG();
-	$(window).resize(msBG);
-	
-	function msBG() {
-		$('.main-banner').css('height', $(window).height() +'px')
-	}
 
-	
+	var getMax = function(){
+        return $(document).height() - $(window).height();
+    }
+    
+    var getValue = function(){
+        return $(window).scrollTop();
+    }
+    
+    if('max' in document.createElement('progress')){
+        var progressBar = $('progress');
+		
+        progressBar.attr({ max: getMax() });
+
+        $(document).on('scroll', function(){
+            progressBar.attr({ value: getValue() });
+        });
+      
+        $(window).resize(function(){
+            progressBar.attr({ max: getMax(), value: getValue() });
+        });   
+    }
+    else {
+        var progressBar = $('.progress-bar'), 
+            max = getMax(), 
+            value, width;
+        
+        var getWidth = function(){
+            // Calculate width in percentage
+            value = getValue();            
+            width = (value/max) * 100;
+            width = width + '%';
+            return width;
+        }
+        
+        var setWidth = function(){
+            progressBar.css({ width: getWidth() });
+        }
+        
+        $(document).on('scroll', setWidth);
+        $(window).on('resize', function(){
+            max = getMax();
+            setWidth();
+        });
+    }
 	/* error message element hide on focus */
 	$('body').on({
 		click: function () {

@@ -34,7 +34,7 @@ class TopicRepository extends BaseRepository {
 		return $this->model->where ( 'level_id', $levelId )->select ( 'id', 'title', 'summary', 'slug', 'level_title as levelTitle', 'picture' )->latest ()->get ();
 	}
 	public function show($slug) {
-		return $this->model->whereSlug ( $slug )->select ( 'id', 'title', 'summary', 'note_title as noteTitle', 'description', 'slug', 'level_title as levelTitle', 'picture' )->firstOrFail ();
+		return $this->model->whereSlug ( $slug )->select ( 'id', 'level_id as levelId', 'title', 'summary', 'note_title as noteTitle', 'description', 'slug', 'level_title as levelTitle', 'picture' )->firstOrFail ();
 	}
 	/**
 	 * Count the users for a role.
