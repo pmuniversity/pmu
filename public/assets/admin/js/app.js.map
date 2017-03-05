@@ -1,1 +1,0 @@
-{"version":3,"sources":["admin_app.js"],"names":[],"mappings":"AAAA;AACA;AACA;AACA;AACA;AACA","file":"app.js","sourcesContent":["const app = new Vue({\r\n    el: '#app',\r\n    data: {\r\n        input: '# hello'\r\n      },\r\n});"]}

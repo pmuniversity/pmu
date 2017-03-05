@@ -1,51 +1,49 @@
 <?php
 
 /*
- * |--------------------------------------------------------------------------
- * | Web Routes
- * |--------------------------------------------------------------------------
- * |
- * | This file is where you may define all of the routes that are handled
- * | by your application. Just tell Laravel the URIs it should respond
- * | to using a Closure or controller method. Build something great!
- * |
- */
-Route::get ( '/', 'TopicsController@index' );
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+DB::listen(function ($query) {
+    // dump ( $query->sql );
+    //dump ( $query->bindings );
+    // dump ( $query->time );
+});
+Route::get('/', 'TopicsController@index');
 
-Route::get ( 'confirm/{token}', 'Auth\RegisterController@confirm' );
+Route::get('/test', function () {
+    SSH::get('/pmuniversity.co/config/app.php', 'C:\laragon\www\app.php');
+});
 
-Auth::routes ();
-Route::post ( 'image', 'FileController@store' ); // Save image
+// Show login page
+Route::get('/' . config('backpack.base.route_prefix', 'admin'), function () {
+    if (!Auth::check()) {
+        redirect('/' . config('backpack.base.route_prefix', 'admin') . '/login');
+    }
+});
 
-/*
- * |--------------------------------------------------------------------------
- * | Admin Routes
- * |--------------------------------------------------------------------------
- * |
- * | This file is where you may define all of the routes that are handled
- * | by your application. Just tell Laravel the URIs it should respond
- * | to using a Closure or controller method. Build something great!
- * |
- */
-Route::group ( [ 
-		'prefix' => 'admin',
-		'namespace' => 'Admin' 
-], function () {
-	Route::get ( '/', 'HomeController@index' );
-	Route::get ( 'users', 'UsersController@index' );
-	Route::post ( '/datatable-users', 'UsersController@ajaxIndex' );
-	// Topics Route
-	Route::resource ( 'topics', 'TopicsController' );
-	Route::post ( '/datatable-topics', 'TopicsController@ajaxIndex' );
-	Route::post ( '/datatable-topics-by-level', 'TopicsController@ajaxIndexByLevel' );
-	// Article Route
-	Route::resource ( 'articles', 'ArticleController' );
-	Route::post ( '/datatable-articles', 'ArticleController@ajaxIndex' );
-	Route::post ( '/dtable-articles-by-type', 'ArticleController@ajaxIndexByType' );
-	// List topics based on Product types
-	Route::get ( 'topics/level/{type}', 'TopicsController@indexByLevel' );
-	Route::get ( 'artcles-by-type/{type}/{topicId}', 'ArticleController@indexByType' );
-} );
+// Admin routes
+Route::prefix(config('backpack.base.route_prefix', 'admin'))->middleware(['web', 'auth'])->group(function () {
+    CRUD::resource('topic', 'Admin\TopicCrudController');
+    CRUD::resource('article', 'Admin\ArticleCrudController');
+        CRUD::resource('halls-of-knowledge', 'Admin\HallsofKnowledgeCrudController');
+
+    // !!! DIFFERENT ADMIN PANEL FOR USER POSTS
+    Route::prefix('topic/search/{topic_id}')->group(function () {
+        CRUD::resource('article', 'Admin\TopicArticleCrudController');
+    });
+    Route::prefix('topic/{topic_id}')->group(function () {
+        CRUD::resource('article', 'Admin\TopicArticleCrudController');
+    });
+});
 
 // Topic details page
-Route::get ( '/{slug}', 'Api\TopicsController@show' );
+Route::get('/{slug}', 'TopicsController@show');
+Route::get('/articles/{type}', 'TopicsController@indexArticles');
+Route::post ( '/user', 'UsersController@store' );

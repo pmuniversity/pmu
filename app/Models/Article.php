@@ -1,107 +1,142 @@
 <?php
 
-namespace PMU\Models;
+namespace App\Models;
 
-use PMU\Presenters\DatePresenter;
-use PMU\Traits\NullableFields;
+use Auth;
+use App\Models\Topic;
+use Backpack\CRUD\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Article extends Model {
-	use DatePresenter,
-        NullableFields, SoftDeletes;
-	
-	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
-	 */
-	protected $table = 'articles';
-	
-	/**
-	 * Validation rules to store an article.
-	 *
-	 * @var array
-	 */
-	public static $storeArticleRules = [ 
-			'topicId' => 'required|exists:topics,id',
-			'typeId' => 'required|exists:article_types,id',
-			'sourceUrl' => 'required|url|max:255',
-			'title' => 'required|max:255',
-			'description' => 'required|max:65000',
-			'authorName' => 'sometimes|full_name',
-			'authorDescription' => 'sometimes',
-			'authorPicture' => 'sometimes|image' 
-	];
-	
-	/**
-	 * The attributes that should be casted to native types.
-	 *
-	 * @var array
-	 */
-	protected $casts = [ 
-			'author_name' => 'string',
-			'author_description' => 'string' 
-	];
-	
-	/**
-	 * The attributes that should be mutated to dates.
-	 *
-	 * @var array
-	 */
-	protected $dates = [ 
-			'deleted_at' 
-	];
-	
-	/**
-	 * Many to Many relation.
-	 *
-	 * @return Illuminate\Database\Eloquent\Relations\belongToMany
-	 */
-	public function types() {
-		return $this->belongsToMany ( env ( 'APP_MODEL_NAMESPACE' ) . 'ArticleType' );
-	}
-	
-	/**
-	 * One to Many relation.
-	 *
-	 * @return Illuminate\Database\Eloquent\Relations\BelongsTo
-	 */
-	public function user() {
-		return $this->belongsTo ( env ( 'APP_MODEL_NAMESPACE' ) . 'User' );
-	}
-	
-	/**
-	 * One to Many relation.
-	 *
-	 * @return Illuminate\Database\Eloquent\Relations\hasMany
-	 */
-	public function comments() {
-		return $this->hasMany ( env ( 'APP_MODEL_NAMESPACE' ) . 'Comment' );
-	}
-	public function topic() {
-		return $this->belongsTo ( env ( 'APP_MODEL_NAMESPACE' ) . 'Topic' );
-	}
-	
-	/**
-	 * Set the author's name.
-	 *
-	 * @param string $value        	
-	 *
-	 * @return string
-	 */
-	public function setAuthorNameAttribute($authorName) {
-		$this->attributes ['author_name'] = $this->nullIfEmpty ( $authorName );
-	}
-	
-	/**
-	 * Set the author's name.
-	 *
-	 * @param string $value        	
-	 *
-	 * @return string
-	 */
-	public function setAuthorDescriptionAttribute($authorDescription) {
-		$this->attributes ['author_description'] = $this->nullIfEmpty ( $authorDescription );
-	}
+class Article extends Model
+{
+    use CrudTrait;
+
+    /*
+   |--------------------------------------------------------------------------
+   | GLOBAL VARIABLES
+   |--------------------------------------------------------------------------
+   */
+
+    //protected $table = 'articles';
+    //protected $primaryKey = 'id';
+    // public $timestamps = false;
+    // protected $guarded = ['id'];
+    protected $fillable = ['topic_id', 'type_title', 'source_url', 'title',
+        'description', 'web_picture', 'mobile_picture', 'video_url',
+        'author_name', 'author_location', 'author_organization',
+        'author_designation', 'author_picture',
+        'status', 'top', 'date'];
+    // protected $hidden = [];
+    // protected $dates = [];
+
+    /*
+	|--------------------------------------------------------------------------
+	| FUNCTIONS
+	|--------------------------------------------------------------------------
+	*/
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $user = Auth::user();
+            $model->user_id = $user->id;
+            $model->last_user_id = $user->id;
+            $model->topic_id = \Route::current()->parameter('topic_id');
+        });
+        static::updating(function ($model) {
+            $user = Auth::user();
+            $model->last_user_id = $user->id;
+        });
+    }
+
+    /*
+	|--------------------------------------------------------------------------
+	| RELATIONS
+	|--------------------------------------------------------------------------
+	*/
+
+    public function topic()
+    {
+        return $this->belongsTo(Topic::class, 'topic_id');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany('App\Models\Tag', 'article_tag');
+    }
+
+    /*
+	|--------------------------------------------------------------------------
+	| SCOPES
+	|--------------------------------------------------------------------------
+	*/
+    public function scopePublished($query)
+    {
+        return $query->where('status', 1)
+            ->where('date', '<=', date('Y-m-d'))
+            ->orderBy('date', 'DESC');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 1);
+    }
+
+
+    /*
+	|--------------------------------------------------------------------------
+	| ACCESORS
+	|--------------------------------------------------------------------------
+	*/
+
+    /*
+	|--------------------------------------------------------------------------
+	| MUTATORS
+	|--------------------------------------------------------------------------
+	*/
+    public function setTitleAttribute($value)
+    {
+        $this->attributes['title'] = ucwords(trim($value));
+    }
+
+    public function setDescriptionAttribute($value)
+    {
+        $this->attributes['description'] = ucwords(trim($value));
+    }
+
+    public function setSourceUrlAttribute($value)
+    {
+        $this->attributes['source_url'] = strtolower(trim($value));
+    }
+
+    public function setVideoUrlAttribute($value)
+    {
+        $this->attributes['video_url'] = strtolower(trim($value));
+    }
+
+    public function setAuthorNameAttribute($value)
+    {
+        $this->attributes['author_name'] = ucwords(trim($value));
+    }
+
+    public function setAuthorLocationAttribute($value)
+    {
+        $this->attributes['author_location'] = ucwords(trim($value));
+    }
+
+    public function setAuthorOrganizationAttribute($value)
+    {
+        $this->attributes['author_organization'] = ucwords(trim($value));
+    }
+
+    public function setAuthorDesignationAttribute($value)
+    {
+        $this->attributes['author_designation'] = ucwords(trim($value));
+    }
 }

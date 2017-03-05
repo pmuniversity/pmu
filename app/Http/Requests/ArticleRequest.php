@@ -1,36 +1,60 @@
 <?php
 
-namespace PMU\Http\Requests;
+namespace App\Http\Requests;
 
-class ArticleRequest extends Request {
-	/**
-	 * Determine if the user is authorized to make this request.
-	 *
-	 * @return bool
-	 */
-	public function authorize() {
-		return true;
-	}
-	
-	/**
-	 * Get the validation rules that apply to the request.
-	 *
-	 * @return array
-	 */
-	public function rules() {
-		return [ 
-				'topic_id' => 'required|exists:topics,id',
-				'type_title' => 'required',
-				'source_url' => 'required|url|max:255',
-				'title' => 'required|max:255',
-				'description' => 'sometimes',
-				'file_path' => 'sometimes|image',
-				'video_url' => 'sometimes|url',
-				'author_name' => 'sometimes',
-				'author_organization' => 'sometimes',
-				'author_location' => 'sometimes',
-				'author_designation' => 'sometimes',
-				'author_picture' => 'sometimes|image' 
-		];
-	}
+use App\Http\Requests\Request;
+
+class ArticleRequest extends \Backpack\CRUD\app\Http\Requests\CrudRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        // only allow updates if the user is logged in
+        return \Auth::check();
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            'title' => 'required|min:3|max:255',
+            'source_url' => 'required',
+            'description' => 'required|min:10',
+            'status' => 'required',
+            'type_title' => 'required',
+            'video_url' => 'required_if:type_title,videos'
+        ];
+    }
+
+    /**
+     * Get the validation attributes that apply to the request.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [
+            //
+        ];
+    }
+
+    /**
+     * Get the validation messages that apply to the request.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            //
+        ];
+    }
 }
