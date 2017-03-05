@@ -1,5 +1,8 @@
-vendor/
-node_modules/
+/node_modules
+/public/storage
+/public/hot
+/storage/*.key
+/vendor
 
 # Netbeans editor specific
 nbproject/
@@ -10,21 +13,8 @@ nbproject/
 .project
 .settings/
 
-# Local storage
-public/storage/
-storage/logs/
-public/templateEditor/kcfinder/*
-public/js/app.js
-public/css/*
-public/rev-manifest.json
-public/fonts/
-
-# Swagger API documentation
-storage/docs/
-
-# Laravel 4 specific
-bootstrap/compiled.php
-app/storage/
+# PhpStrom editor specific
+/.idea
 
 # Laravel 5 & Lumen specific
 bootstrap/cache/

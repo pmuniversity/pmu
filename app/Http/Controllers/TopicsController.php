@@ -1,130 +1,96 @@
 <?php
 
-namespace PMU\Http\Controllers;
+namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use PMU\Repositories\ {
-	TopicRepository, 
-	ArticleRepository
-};
-use PMU\Traits\ApiControllerTrait;
-use PMU\Http\Controllers\Controller;
+use Agent;
 use Cache;
-use PMU\Models\ {
-	Article
-};
-use Illuminate\Database\ {
-	Eloquent\ModelNotFoundException, 
-	QueryException
-};
+use App\Models\Topic;
+use Illuminate\Http\Request;
+use App\Repositories\HokRepository;
+use App\Repositories\TopicRepository;
+use App\Repositories\ArticleRepository;
 
-class TopicsController extends Controller {
-	use ApiControllerTrait;
-	/**
-	 * Illuminate\Http\Request.
-	 *
-	 * @var request
-	 */
-	protected $request;
-	
-	/**
-	 * The TopicRepository instance.
-	 *
-	 * @var App\Repositories\TopicRepository
-	 */
-	protected $topicGestion;
-	/**
-	 * The ArticleRepository instance.
-	 *
-	 * @var App\Repositories\ArticleRepository
-	 */
-	protected $articleGestion;
-	/**
-	 * Create a new controller instance.
-	 *
-	 * @return void
-	 */
-	public function __construct(Request $request, TopicRepository $topicRepo, ArticleRepository $articleRepo) {
-		$this->request = $request;
-		$this->topicGestion = $topicRepo;
-		$this->articleGestion = $articleRepo;
-	}
-	
-	/**
-	 * Show the application dashboard.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function index() {
-		try {
-			$bachelorTopics = $this->topicGestion->indexByLevel ( 1 );
-			
-			$masterTopics = $this->topicGestion->indexByLevel ( 2 );
-			
-			$specializationTopics = $this->topicGestion->indexByLevel ( 3 );
-			$data = [ 
-					'bachelorTopics' => $bachelorTopics,
-					'masterTopics' => $masterTopics,
-					'specializationTopics' => $specializationTopics 
-			];
-			return view ( 'welcome', $data );
-		} catch ( ModelNotFoundException $e ) {
-			return $this->respondNotFound ( trans ( 'Requested resource not found' ) );
-		} catch ( QueryException $e ) {
-			return $this->respondServerError ( trans ( 'Something went wrong' ) . $e->getMessage () );
-		}
-	}
-	/**
-	 * Show the application dashboard.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function show($slug) {
-		$topic = $this->topicGestion->show ( $slug );
-		$articles = $this->articleGestion->index ( 15, $topic->id, 'latest' );
-		$data = [ ];
-		$data ['topic'] = $topic;
-		$data ['articles'] = $articles;
-		return view ( 'topic_detail', $data );
-	}
-	/**
-	 * Show the application dashboard.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function indexArticles($type) {
-		// Set pagination
-		$perPage = $this->request->has ( 'perPage' ) ? $this->request->input ( 'perPage' ) : 5;
-		$page = ( int ) $this->request->input ( 'page', 1 );
-		
-		$topicId = $this->request->input ( 'topicId' );
-		
-		$articles = $this->articleGestion->index ( $perPage, $topicId, $type );
-		
-		$formatArticles = [ ];
-		
-		if ($articles->total () === 0) {
-			return $this->respondNotFound ( 'No records found' );
-		}
-		
-		foreach ( $articles as $article ) {
-			$formatArticles [] = $this->articleGestion->formatResponse ( $article );
-		}
-		
-		$data ['pagination'] = customizePaginator ( $articles, $page );
-		$data ['articles'] = $formatArticles;
-		return $this->respondWithSuccess ( 'success', $data );
-	}
-	/**
-	 *
-	 * @param integer $articleId        	
-	 */
-	public function upvotes($articleId) {
-		$article = $this->articleGestion->getById ( $articleId );
-		$upvoteCnt = $article->upvotes_count + 1;
-		Article::find ( $articleId )->increment ( 'upvotes_count' );
-		return $this->respondWithSuccess ( 'success', [ 
-				'count' => $upvoteCnt 
-		] );
-	}
+class TopicsController extends Controller
+{
+    protected $topic;
+    protected $article;
+
+    public function __construct(TopicRepository $topicRepo, ArticleRepository $article)
+    {
+        $this->topic = $topicRepo;
+        $this->article = $article;
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(HokRepository $hok)
+    {
+        $bachelorTopics = $this->topic->indexByLevel('Bachelor\'s degree');
+
+        $masterTopics = $this->topic->indexByLevel('Master\'s degree');
+
+        $specTopics = $this->topic->indexByLevel('Specialization');
+        $hallsofKnowledge = $hok->orderBy('created_at', 'desc')->first();
+        $device = getUserDeviceType();
+        if (Agent::isMobile()) {
+            return view('mobile.home', compact('bachelorTopics', 'masterTopics', 'specTopics', 'device', 'hallsofKnowledge'));
+        }
+
+        return view('desktop.home', compact('bachelorTopics', 'masterTopics', 'specTopics', 'device', 'hallsofKnowledge'));
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  $slug
+     * @return \Illuminate\Http\Response
+     */
+    public function show($slug)
+    {
+        $topic = $this->topic->getBySlug($slug);
+        $articles = $this->article->page($topic->id);
+        $nextTopic = Topic::find($topic->nextRecord());
+        $previousTopic = Topic::find($topic->previousRecord());
+        $device = getUserDeviceType();
+        if (Agent::isMobile()) {
+            return view('mobile.detail', compact('topic', 'articles', 'previousTopic', 'nextTopic', 'device'));
+        }
+        return view('desktop.detail', compact('topic', 'articles', 'previousTopic', 'nextTopic', 'device'));
+    }
+
+    public function indexArticles($type, Request $request)
+    {
+        $this->article->forgetCache();
+        // Set pagination
+        $perPage = $request->has('perPage') ? $request->input('perPage') : 5;
+        $page = ( int )$request->input('page', 1);
+
+        $topicId = $request->input('topic_id');
+
+        $articles = $this->article->page($topicId, $type, $perPage);
+
+        $formatArticles = [];
+
+        if ($articles->total() === 0) {
+            $data ['pagination']['hasMore'] = false;
+            $data ['articles'] = '';
+            return response()->json([
+                'data' => $data
+            ], 404);
+        }
+
+        foreach ($articles as $article) {
+            $formatArticles [] = $this->article->formatResponse($article);
+        }
+
+        $data ['pagination'] = customizePaginator($articles, $page);
+        $data ['articles'] = $formatArticles;
+        return response()->json([
+            'data' => $data,
+        ]);
+    }
+
 }

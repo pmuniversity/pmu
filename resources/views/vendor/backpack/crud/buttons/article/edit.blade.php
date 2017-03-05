@@ -1,0 +1,2 @@
+<a href="{{ '/admin/article/'.$entry->getKey() }}/edit" class="btn btn-xs btn-default"><i
+            class="fa fa-edit"></i> Edit</a>

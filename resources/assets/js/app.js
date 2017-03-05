@@ -1,168 +1,151 @@
 
 /**
  * First we will load all of this project's JavaScript dependencies which
- * include Vue and Vue Resource. This gives a great starting point for building
- * robust, powerful web applications using Vue and Laravel.
+ * includes Vue and other libraries. It is a great starting point when
+ * building robust, powerful web applications using Vue and Laravel.
  */
 
 require('./bootstrap');
 
 /**
- * Next, we will create a fresh Vue application instance and attach it to the
- * body of the page. From here, you may begin adding components to the
- * application, or feel free to tweak this setup for your needs.
+ * Next, we will create a fresh Vue application instance and attach it to
+ * the page. Then, you may begin adding components to this application
+ * or customize the JavaScript scaffolding to fit your unique needs.
  */
-
-Vue.component('bachelore-topics', require('./components/BacheloreTopics.vue'));
-Vue.component('master-topics', require('./components/MasterTopics.vue'));
-Vue.component('specialization-topics', require('./components/SpecializationTopics.vue'));
 Vue.component('tabs', {
     template: `
-        <div>
-            <section class="inner-tabs">
-    			<div class="container">
-        			<ul>
-			            <li v-for="tab in tabs">
-                        <a :href="tab.href" @click="selectTab(tab)" :class="{ 'active': tab.isActive }">{{ tab.name }}</a>
-                    </li>
-        			</ul>
-    			</div>
-    		</section>
-    		<div class="tabs-details">
-    			<slot></slot>
-    		</div>
-        </div>
-    `,
-    data() {
-    	return {
-    		tabs: []
-    	}
-    },
-    created() {
-    	this.tabs = this.$children
-    },
-    methods: {
-        selectTab(selectedTab) {
-            this.tabs.forEach(tab => {
-                tab.isActive = (tab.href == selectedTab.href);
-            });
-        }
+<div>
+<section class="inner-tabs">
+    <div class="container">
+    <ul>
+    <li v-for="tab in tabs">
+    <a :href="tab.href" @click="selectTab(tab)" :class="{ 'active': tab.isActive }">{{ tab.name }}</a>
+</li>
+</ul>
+</div>
+</section>
+<div class="tabs-details">
+    <slot></slot>
+    </div>
+    </div>
+`,
+data() {
+    return {
+        tabs: []
     }
+},
+created() {
+    this.tabs = this.$children
+},
+methods: {
+    selectTab(selectedTab) {
+        this.tabs.forEach(tab => {
+            tab.isActive = (tab.href == selectedTab.href);
+    });
+}
+}
 });
 
 Vue.component('tab', {
-	template: `
-		<div v-if="isActive">
-			<section class="inner-tab-content">
-				<div class="container">
-					<div id="top" class="detail-wrapper">
-						<!--Article block-->
-						<div v-for="article in articles" class="well">
-							<div class="media">
-								<div class="media-body">
-									<h2><a :href="article.sourceUrl" target="_blank">{{ article.title }}</a></h2>
-									<ul>
-										<li>{{ article.authorName }}</li>
-										<li><span class="dot"></span></li>
-										<li>{{ article.authorDesignation }}</li>
-										<li><span class="dot"></span></li>
-										<li>{{ article.authorOffice }}</li>
-										<li><span class="dot"></span></li>
-										<li>{{ article.authorLocation }}</li>
-									</ul>
-									<div v-if="article.file_path" class="image-box"><img :src="article.file_path" /></div>
-                        				<p v-if="article.description">{{ article.description }}...</p>
-									<div class="article-footer">
-										<a :href="article.sourceUrl" target="_blank" class="read">Read</a>
-									</div>
+    template: `
+	<div v-if="isActive">
+		<section class="inner-tab-content">
+			<div class="container">
+				<div id="top" class="detail-wrapper">
+					<!--Article block-->
+					<div v-for="article in articles" class="well">
+						<div class="media">
+							<div class="media-body">
+								<h2><a :href="article.source_url" target="_blank">{{ article.title }}</a></h2>
+								<div v-if="article.web_picture" class="image-box"><img :src="article.web_picture" />
 								</div>
-								<div class="media-right" v-if="article.articleType === 'videos'">
-                    				<iframe width="300" height="169" :src="article.videoSrc" frameborder="0" allowfullscreen></iframe>
-                    			</div>
+								<p v-if="article.description">{{ article.description }}...</p>
+								<div class="article-footer">
+									<a :href="article.source_url" target="_blank" class="read">Read</a>
+								</div>
 							</div>
 						</div>
-						<!--//Article block-->
-						<div v-if="hasMoreArticles" class="show-more" @click="loadMoreArticles">Show More</div>
-						<div v-if="errorMessage" class="show-more">{{ errorMessage }}</div>
+					</div>
+					<!--//Article block-->
+					<div v-if="hasMoreArticles" class="show-more" @click="loadMoreArticles">Show More
+					</div>
+					<div v-if="errorMessage" class="show-more">{{ errorMessage }}
 					</div>
 				</div>
-			</section>
-		</div>
+			</div>
+		</section>
+	</div>
 	`,
 	props: {
 		name: { required: true },
 		selected: { default: false }
 	},
 	data() {
-        return {
-            isActive: false,
-            articles: [],
-            errorMessage: '',
-            hasMoreArticles: false,
-            page: 1,
-            upvoted: false
-        };
-    },
-    computed: {
-        href() {
-            return '#' + this.name.toLowerCase().replace(/ /g, '-');
-        }
-    },
-    mounted() {
-        this.isActive = this.selected;
-        this.prepareComponent();
-    },
-    methods: {
-    	/**
+		return {
+			isActive: true,
+			articles: [],
+			errorMessage: '',
+			hasMoreArticles: false,
+			page: 1
+		};
+	},
+	computed: {
+		href() {
+			return '#' + this.name.toLowerCase().replace(/ /g, '-');
+		}
+	},
+	mounted() {
+		this.isActive = this.selected;
+		this.prepareComponent();
+	},
+	methods: {
+		/**
 		 * Prepare the component.
 		 */
-    	prepareComponent() {
-    		this.getArticles();
-    	},
-    	/**
-		* Get articles.
-		*/
+		prepareComponent() {
+			this.getArticles();
+		},
+		/**
+		 * Get articles.
+		 */
 		getArticles() {
-    		const topicId = $("#special-article span").text()
-    		this.$http.get('/api/articles/' + this.name.toLowerCase().replace(/ /g, '-'), {params:  {topicId: topicId}} )
-    		.then((response) => {    			
-    			const responseData = response.body.data;
-    			this.articles = responseData.articles
-    			this.hasMoreArticles = responseData.pagination.hasMore
-    		  }, (response) => {
-    			 this.errorMessage = response.body.message
+			const topicId = $("#special-article span").text()
+			const articleType = this.name.toLowerCase().replace(/ /g, '-')
+			this.$http.get('/articles/' + articleType, {params:  {topic_id: topicId}} )
+				.then((response) => {    	
+					const responseData = response.data.data;
+					this.articles = responseData.articles
+					this.hasMoreArticles = responseData.pagination.hasMore
+				}, (response) => {
+    			 this.errorMessage = "No records found"
     		  });
-    	},
-    	/**
-    	 * Ajax loading articles
-    	 */
-    	loadMoreArticles() {
+		},
+		/**
+		 * Ajax loading articles
+		 */
+		loadMoreArticles() {
     		this.page += 1
     		const topicId = $("#special-article span").text()
-    		this.$http.get('/api/articles/' + this.name.toLowerCase().replace(/ /g, '-'), {params:  {topicId: topicId, page: this.page}} )
+    		this.$http.get('/articles/' + this.name.toLowerCase().replace(/ /g, '-'), {params:  {topic_id: topicId, page: this.page}} )
     		.then((response) => {
     			const responseData = response.body.data; 
     			for (var i = 0; i < responseData.articles.length; i++) {
                    this.articles.push(responseData.articles[i]);
-                 }    			
-    			this.hasMoreArticles = responseData.pagination.hasMore
+                 }  
+				if(responseData.articles.length == 0) {
+					this.hasMoreArticles = false
+					this.errorMessage = "No records found"
+				}	 
+    			
     		  }, (response) => {
-    			 this.errorMessage = response.body.message
+    			 this.errorMessage = "No records found"
     		  });
     	},
-    	upvote(id) {
-    		this.$http.patch('/api/upvotes/' + id).then((response) => {    			
-    			$('a#' + id).addClass('voted');
-    			$("a#" + id + " .count").text(response.body.data.count)
-    			}),(response) => {    				
-    		}			  		
-    	}
-    }
+	}	
 });
-
-new Vue({
+const app = new Vue({
     el: '#app',
-    data: {
+	data: {
 	    formInputs: {},
 	    formErrors: {},
 	    successMessage: '',
@@ -181,7 +164,7 @@ new Vue({
 				}
 			  })
 			.then((response) => {
-				this.successMessage = response.body.message
+				this.successMessage = response.body.data.message
 				//$('input[type="submit"]').prop('disabled', true);
 				this.disabledButton = true
 				this.formInputs.email = ''

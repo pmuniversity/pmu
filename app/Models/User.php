@@ -1,111 +1,45 @@
 <?php
 
-namespace PMU\Models;
+namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Backpack\CRUD\CrudTrait;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
-use PMU\Notifications\ConfirmEmail as ConfirmEmailNotification;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Backpack\Base\app\Notifications\ResetPasswordNotification as ResetPasswordNotification;
 
-class User extends Authenticatable {
-	use Notifiable;
-	
-	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
-	 */
-	protected $table = 'users';
-	
-	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
-	protected $hidden = [ 
-			'password',
-			'remember_token' 
-	];
-	
-	/**
-	 * Validation rules to store an user.
-	 *
-	 * @var array
-	 */
-	public static $loginAdminRules = [ 
-			'user.email' => 'required|exists:users,email',
-			'user.password' => 'required',
-			'user.memory' => 'sometimes|boolean' 
-	];
-	
-	/**
-	 * One to Many relation.
-	 *
-	 * @return Illuminate\Database\Eloquent\Relations\BelongsTo
-	 */
-	public function role() {
-		return $this->belongsTo ( env ( 'APP_MODEL_NAMESPACE' ) . 'Role' );
-	}
-	
-	/**
-	 * One to Many relation.
-	 *
-	 * @return Illuminate\Database\Eloquent\Relations\hasMany
-	 */
-	public function topics() {
-		return $this->hasMany ( env ( 'APP_MODEL_NAMESPACE' ) . 'Topic' );
-	}
-	
-	/**
-	 * Get user status.
-	 *
-	 * @return string
-	 */
-	public function getStatus() {
-		return $this->role->slug;
-	}
-	/**
-	 * Get user role.
-	 *
-	 * @return string
-	 */
-	public function getRole() {
-		return $this->role->slug;
-	}
-	
-	/**
-	 * Check media all access.
-	 *
-	 * @return bool
-	 */
-	public function accessMediasAll() {
-		return $this->getStatus () === 'super_admin' or $this->getStatus () === 'admin';
-	}
-	
-	/**
-	 * Check api all access.
-	 *
-	 * @return bool
-	 */
-	public function accessApisAll() {
-		return $this->getStatus () === 'super_admin' or $this->getStatus () === 'admin';
-	}
-	
-	/**
-	 * Check media access one folder.
-	 *
-	 * @return bool
-	 */
-	public function accessMediasFolder() {
-		return $this->getStatus () != 'user';
-	}
-	
-	/**
-	 * Send the email verification notification.
-	 *
-	 * @param string $activationCode        	
-	 * @return void
-	 */
-	public function sendConfirmEmailNotification($activationCode) {
-		$this->notify ( new ConfirmEmailNotification ( $activationCode ) );
-	}
+class User extends Authenticatable
+{
+    use Notifiable;
+    use CrudTrait;
+    use HasRoles;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name', 'email', 'password', 'news_letter_subscribed'
+    ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
 }

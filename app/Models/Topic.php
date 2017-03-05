@@ -1,140 +1,159 @@
 <?php
 
-namespace PMU\Models;
+namespace App\Models;
 
-use PMU\Presenters\DatePresenter;
+use Auth;
+use App\Models\Article;
+use Backpack\CRUD\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Cviebrock\EloquentSluggable\Sluggable;
+use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
 
-class Topic extends BaseModel {
-	use DatePresenter,SoftDeletes;
-	
-	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
-	 */
-	protected $table = 'topics';
-	
-	/**
-	 * Validation rules to store a topic.
-	 *
-	 * @var array
-	 */
-	public static $storeTopicRules = [ 
-			'title' => 'required|max:255',
-			'description' => 'required|max:65000',
-			'levelId' => 'required|exists:levels,id',
-			'authorName' => 'sometimes|full_name',
-			'h1' => 'sometimes',
-			'metaTitle' => 'sometimes',
-			'metaDescription' => 'sometimes',
-			'metaKeywords' => 'sometimes' 
-	];
-	
-	/**
-	 * The attributes that should be casted to native types.
-	 *
-	 * @var array
-	 */
-	protected $casts = [ 
-			'h1' => 'string',
-			'metaTitle' => 'string',
-			'metaKeywords' => 'string',
-			'metaDescription' => 'string' 
-	];
-	
-	/**
-	 * Scope a query to only include active topics.
-	 *
-	 * @return \Illuminate\Database\Eloquent\Builder
-	 */
-	public function scopeActive($query) {
-		return $query->where ( 'active', 1 );
-	}
-	
-	/**
-	 * Scope a query to only include inactive topics.
-	 *
-	 * @return \Illuminate\Database\Eloquent\Builder
-	 */
-	public function scopeInactive($query) {
-		return $query->where ( 'active', 0 );
-	}
-	
-	/**
-	 * Scope a query to only include Latest topics.
-	 *
-	 * @return \Illuminate\Database\Eloquent\Builder
-	 */
-	public function scopeNewestFirst($query) {
-		return $query->orderBy ( 'created_at', 'desc' );
-	}
-	
-	/**
-	 * Scope a query to search topics.
-	 *
-	 * @return \Illuminate\Database\Eloquent\Builder
-	 */
-	public function scopeSearch($query, $title) {
-		return $query->where ( 'title', 'like', '%' . $title . '%' );
-	}
-	
-	/**
-	 * Scope a query to search topics.
-	 *
-	 * @return \Illuminate\Database\Eloquent\Builder
-	 */
-	public function scopeBachelore($query, $title) {
-		return $query->where ( 'level_id', 1 );
-	}
-	
-	/**
-	 * Scope a query to search Bachelore topics.
-	 *
-	 * @return \Illuminate\Database\Eloquent\Builder
-	 */
-	public function scopeMaster($query, $title) {
-		return $query->where ( 'level_id', 2 );
-	}
-	
-	/**
-	 * Scope a query to Specialization topics.
-	 *
-	 * @return \Illuminate\Database\Eloquent\Builder
-	 */
-	public function scopeSpecialization($query, $title) {
-		return $query->where ( 'level_id', 3 );
-	}
-	
-	/**
-	 * One to Many relation.
-	 *
-	 * @return Illuminate\Database\Eloquent\Relations\BelongsTo
-	 */
-	public function level() {
-		return $this->belongsTo ( env ( 'APP_MODEL_NAMESPACE' ) . 'Level' );
-	}
-	
-	/**
-	 * One to Many relation.
-	 *
-	 * @return Illuminate\Database\Eloquent\Relations\BelongsTo
-	 */
-	public function articles() {
-		return $this->hasMany ( env ( 'APP_MODEL_NAMESPACE' ) . 'Article' );
-	}
-	/**
-	 * Get next record
-	 */
-	public function nextRecord() {
-		return $this->where ( 'id', '<', $this->id )->where ( 'level_id', '=', $this->levelId )->max ( 'id' );
-	}
-	
-	/**
-	 * * Get previous record
-	 */
-	public function previousRecord() {
-		return $this->where ( 'id', '>', $this->id )->where ( 'level_id', '=', $this->levelId )->min ( 'id' );
-	}
+
+class Topic extends Model
+{
+    use CrudTrait;
+    use Sluggable, SluggableScopeHelpers;
+    /*
+    |--------------------------------------------------------------------------
+    | GLOBAL VARIABLES
+    |--------------------------------------------------------------------------
+    */
+    protected $fillable = ['level_title',
+        'title', 'slug', 'summary', 'note_title', 'note_description', 'h1', 'meta_description', 'meta_keywords',
+        'featured', 'date', 'web_picture', 'web_hover_picture', 'mobile_picture', 'mobile_hover_picture'];
+    protected $casts = [
+        'featured' => 'boolean',
+        'date' => 'date',
+    ];
+
+    /**
+     * Return the sluggable configuration array for this model.
+     *
+     * @return array
+     */
+    public function sluggable()
+    {
+        return [
+            'slug' => [
+                'source' => 'slug_or_title',
+            ],
+        ];
+    }
+    /*
+	|--------------------------------------------------------------------------
+	| FUNCTIONS
+	|--------------------------------------------------------------------------
+	*/
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $user = Auth::user();
+            $model->user_id = $user->id;
+            $model->last_user_id = $user->id;
+        });
+        static::updating(function ($model) {
+            $user = Auth::user();
+            $model->last_user_id = $user->id;
+        });
+    }
+
+    /**
+     * Get next record
+     */
+    public function nextRecord()
+    {
+        return $this->where('id', '<', $this->id)->where('level_title', '=', $this->level_title)->max('id');
+    }
+
+    /**
+     * * Get previous record
+     */
+    public function previousRecord()
+    {
+        return $this->where('id', '>', $this->id)->where('level_title', '=', $this->level_title)->min('id');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    */
+    public function articles()
+    {
+        return $this->hasMany(Article::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPES
+    |--------------------------------------------------------------------------
+    */
+
+    public function scopePublished($query)
+    {
+        return $query->where('status', 'PUBLISHED')
+            ->where('date', '<=', date('Y-m-d'))
+            ->orderBy('date', 'DESC');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESORS
+    |--------------------------------------------------------------------------
+    */
+
+    // The slug is created automatically from the "title" field if no slug exists.
+    public function getSlugOrTitleAttribute()
+    {
+        if ($this->slug != '') {
+            return $this->slug;
+        }
+
+        return $this->title;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | MUTATORS
+    |--------------------------------------------------------------------------
+    */
+    public function setTitleAttribute($value)
+    {
+        $this->attributes['title'] = trim(ucwords($value));
+    }
+
+    public function setSummaryAttribute($value)
+    {
+        $this->attributes['summary'] = trim(ucwords($value));
+    }
+
+    public function setNoteTitleAttribute($value)
+    {
+        $this->attributes['note_title'] = trim(ucwords($value));
+    }
+
+    public function setNoteDescriptionAttribute($value)
+    {
+        $this->attributes['note_description'] = trim(ucwords($value));
+    }
+
+    public function setWebPictureAttribute($value)
+    {
+        $this->attributes['web_picture'] = $value;
+        $this->attributes['web_hover_picture'] = $value;
+    }
+
+    public function setMobilePictureAttribute($value)
+    {
+        $this->attributes['mobile_picture'] = $value;
+        $this->attributes['mobile_hover_picture'] = $value;
+    }
 }

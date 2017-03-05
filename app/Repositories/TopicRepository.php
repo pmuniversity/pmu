@@ -1,104 +1,46 @@
 <?php
 
-namespace PMU\Repositories;
 
-use PMU\Models\ {
-	Level, 
-	Topic
-};
+namespace App\Repositories;
 
-class TopicRepository extends BaseRepository {
-	
-	/**
-	 * Create a new TopicRepository instance.
-	 *
-	 * @param App\Models\Post $post        	
-	 *
-	 * @return void
-	 */
-	public function __construct(Topic $topic) {
-		$this->model = $topic;
-	}
-	
-	/**
-	 * Get topic collection.
-	 *
-	 * @param int $n        	
-	 * @param int $levelId        	
-	 * @param string $orderby        	
-	 * @param string $direction        	
-	 *
-	 * @return Illuminate\Support\Collection
-	 */
-	public function indexByLevel($levelId) {
-		return $this->model->where ( 'level_id', $levelId )->select ( 'id', 'title', 'summary', 'slug', 'level_title as levelTitle', 'picture' )->latest ()->get ();
-	}
-	public function show($slug) {
-		return $this->model->whereSlug ( $slug )->select ( 'id', 'level_id as levelId', 'title', 'summary', 'note_title as noteTitle', 'description', 'slug', 'level_title as levelTitle', 'picture' )->firstOrFail ();
-	}
-	/**
-	 * Count the users for a role.
-	 *
-	 * @param string $role        	
-	 * @return int
-	 */
-	public function count($levelId = null) {
-		if ($levelId) {
-			return $this->model->where ( 'level_id', $levelId )->count ();
-		}
-		return $this->model->count ();
-	}
-	
-	/**
-	 * Create a topic.
-	 *
-	 * @param array $inputs        	
-	 * @param int $user_id        	
-	 *
-	 * @return void
-	 */
-	public function store($inputs, $userId) {
-		$topic = $this->saveTopic ( new $this->model (), $inputs, $userId );
-		
-		return $topic;
-	}
-	
-	/**
-	 * Create or update a topic.
-	 *
-	 * @param App\Models\Topic $topic        	
-	 * @param array $inputs        	
-	 * @param bool $user_id        	
-	 *
-	 * @return App\Models\Topic
-	 */
-	public function saveTopic($topic, $inputs, $userId = null) {
-		$topic->level_id = ( int ) $inputs ['level_id'];
-		$topic->level_title = $inputs ['level_title'];
-		$topic->title = ucwords ( strtolower ( trim ( $inputs ['title'] ) ) );
-		$topic->summary = ucwords ( trim ( $inputs ['summary'] ) );
-		$topic->note_title = ucwords ( strtolower ( trim ( $inputs ['note_title'] ) ) );
-		$topic->description = ucwords ( trim ( $inputs ['description'] ) );
-		if (isset ( $inputs ['picture'] )) {
-			$topic->picture = $inputs ['picture'] ?? null;
-		}
-		$topic->author_name = isset ( $inputs ['author_name'] ) ? ucwords ( strtolower ( $inputs ['author_name'] ) ) : null;
-		$topic->author_location = isset ( $inputs ['author_location'] ) ? ucwords ( strtolower ( $inputs ['author_location'] ) ) : null;
-		$topic->author_office = isset ( $inputs ['author_office'] ) ? ucwords ( strtolower ( $inputs ['author_office'] ) ) : null;
-		$topic->author_designation = isset ( $inputs ['author_designation'] ) ? ucwords ( strtolower ( $inputs ['author_designation'] ) ) : null;
-		$topic->author_picture = isset ( $inputs ['author_picture'] ) ? ucwords ( strtolower ( $inputs ['author_picture'] ) ) : null;
-		$topic->h1 = isset ( $inputs ['h1'] ) ? ucfirst ( $inputs ['h1'] ) : null;
-		$topic->meta_title = $inputs ['meta_title'] ?? null;
-		$topic->meta_description = $inputs ['meta_description'] ?? null;
-		$topic->meta_keywords = $inputs ['meta_keywords'] ?? null;
-		$topic->slug = isset ( $topic->id ) ? $this->generateSlug ( $topic, $inputs ['title'], $topic->id ) : $this->generateSlug ( $topic, $inputs ['title'] );
-		$topic->active = $inputs ['active'] ?? 1;
-		$topic->read_time = articleReadTime ( $inputs ['title'] );
-		if ($userId) {
-			$topic->author_id = $userId;
-		}
-		$topic->save ();
-		
-		return $topic;
-	}
+use App\Models\Topic;
+use Illuminate\Contracts\Container\Container;
+
+
+class TopicRepository extends EloquentRepository
+{
+    /**
+     * Instantiate repository object with required data
+     *
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->setContainer($container)
+            ->setModel(Topic::class)
+            ->setRepositoryId('topicRepo');
+    }
+
+    /**
+     * Fetch topics by level
+     *
+     * @param $title
+     * @param string $sort
+     * @param string $sortColumn
+     * @return mixed
+     */
+    public function indexByLevel($title, $sort = 'desc', $sortColumn = 'created_at')
+    {
+        return $this->orderBy($sortColumn, $sort)->findWhere(['level_title', '=', $title]);
+    }
+
+    public function getBySlug($slug)
+    {
+
+        return $this->with(['articles' => function ($query) {
+            $query->active()->orderBy('date', 'desc');
+        }])->findBy('slug', $slug);
+    }
+
+
 }
