@@ -127,22 +127,22 @@ class Topic extends Model
     */
     public function setTitleAttribute($value)
     {
-        $this->attributes['title'] = trim(ucwords($value));
+        $this->attributes['title'] = ucfirst(trim($value));
     }
 
     public function setSummaryAttribute($value)
     {
-        $this->attributes['summary'] = trim(ucwords($value));
+        $this->attributes['summary'] = ucfirst(trim($value));
     }
 
     public function setNoteTitleAttribute($value)
     {
-        $this->attributes['note_title'] = trim(ucwords($value));
+        $this->attributes['note_title'] = ucfirst(trim($value));
     }
 
     public function setNoteDescriptionAttribute($value)
     {
-        $this->attributes['note_description'] = trim(ucwords($value));
+        $this->attributes['note_description'] = ucfirst(trim($value));
     }
 
     public function setWebPictureAttribute($value)

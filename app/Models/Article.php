@@ -102,12 +102,12 @@ class Article extends Model
 	*/
     public function setTitleAttribute($value)
     {
-        $this->attributes['title'] = ucwords(trim($value));
+        $this->attributes['title'] = ucfirst(trim($value));
     }
 
     public function setDescriptionAttribute($value)
     {
-        $this->attributes['description'] = ucwords(trim($value));
+        $this->attributes['description'] = ucfirst(trim($value));
     }
 
     public function setSourceUrlAttribute($value)

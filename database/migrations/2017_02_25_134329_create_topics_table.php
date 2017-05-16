@@ -15,7 +15,7 @@ class CreateTopicsTable extends Migration
     {
         Schema::create('topics', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->enum('level_title', ['Bachelor\'s degree', 'Master\'s degree', 'Specialization'])->default('Bachelor\'s degree');
+            $table->enum('level_title', ["Bachelors degree", "Masters degree", "Specialization"])->default("Bachelors degree");
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('last_user_id');
             $table->string('title')->nullable();

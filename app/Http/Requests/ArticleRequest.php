@@ -27,7 +27,7 @@ class ArticleRequest extends \Backpack\CRUD\app\Http\Requests\CrudRequest
         return [
             'title' => 'required|min:3|max:255',
             'source_url' => 'required',
-            'description' => 'required|min:10',
+            //'description' => 'sometimes|min:10',
             'status' => 'required',
             'type_title' => 'required',
             'video_url' => 'required_if:type_title,videos'

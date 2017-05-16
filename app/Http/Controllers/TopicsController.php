@@ -28,6 +28,7 @@ class TopicsController extends Controller
      */
     public function index(HokRepository $hok)
     {
+        $this->topic->forgetCache();
         $bachelorTopics = $this->topic->indexByLevel('Bachelor\'s degree');
 
         $masterTopics = $this->topic->indexByLevel('Master\'s degree');
@@ -50,6 +51,7 @@ class TopicsController extends Controller
      */
     public function show($slug)
     {
+        $this->topic->forgetCache();
         $topic = $this->topic->getBySlug($slug);
         $articles = $this->article->page($topic->id);
         $nextTopic = Topic::find($topic->nextRecord());
